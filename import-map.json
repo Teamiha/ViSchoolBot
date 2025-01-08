@@ -1,0 +1,12 @@
+{
+  "imports": {
+    "@std/colors": "https://deno.land/x/cliffy@v0.25.7/ansi/colors.ts",
+    "@grammyjs/bot": "https://deno.land/x/grammy@v1.32.0/mod.ts",
+    "@openai/openai": "https://deno.land/x/openai@v4.68.2/mod.ts",
+    "@googleAPI": "https://deno.land/x/google_deno_integration/mod.ts",
+    "@googleAI": "npm:@google/generative-ai",
+    "@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.5",
+    "@libs/std": "jsr:@libs/std@^2024.10.5",
+    "@DenoCrone": "https://deno.land/x/deno_cron/mod.ts"
+  }
+}
