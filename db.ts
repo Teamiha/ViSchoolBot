@@ -1,4 +1,5 @@
 import { getKv } from "./botStatic/kvClient.ts";
+import { REGISTRATION_TIMEOUT } from "./botStatic/const.ts";
 
 export interface UserData {
   nickName: string;
@@ -10,6 +11,7 @@ export interface UserData {
   hwoRegistered: string;
   notes: string;
 }
+
 
 export async function createNewUser(userId: number) {
     const kv = await getKv();
@@ -74,6 +76,30 @@ export async function createNewUser(userId: number) {
     }
   }
 
+  export async function getAllUserNames(): Promise<string[]> {
+    const kv = await getKv();
+    const users = kv.list<UserData>({ prefix: ["ViBot", "userId:"] });
+    const names: string[] = [];
+  
+    for await (const user of users) {
+      if (user.value && user.value.name) {
+        names.push(user.value.name);
+      }
+    }
+  
+    return names;
+  }
+
+  export async function getUserParametr<Key extends keyof UserData>(
+    userId: number,
+    parametr: Key,
+  ) {
+    const user = await getUser(userId);
+    return (user.value as UserData)[parametr];
+  }
+
+// Student status management
+
   export async function addStudent(userId: number) {
     const kv = await getKv();
   
@@ -106,31 +132,9 @@ export async function createNewUser(userId: number) {
   
     return studentList.includes(userId);
   }
-  
-  export async function getAllUserNames(): Promise<string[]> {
-    const kv = await getKv();
-    const users = kv.list<UserData>({ prefix: ["ViBot", "userId:"] });
-    const names: string[] = [];
-  
-    for await (const user of users) {
-      if (user.value && user.value.name) {
-        names.push(user.value.name);
-      }
-    }
-  
-    return names;
-  }
-
-  export async function getUserParametr<Key extends keyof UserData>(
-    userId: number,
-    parametr: Key,
-  ) {
-    const user = await getUser(userId);
-    return (user.value as UserData)[parametr];
-  }
 
 
-  
+// Blocked user
   export async function blockUser(userId: number) {
     const kv = await getKv();
     const result = await kv.get<number[]>(["ViBot", "blocked"]);
@@ -157,4 +161,59 @@ export async function createNewUser(userId: number) {
     const blockedList = result.value || [];
 
     return blockedList.includes(userId);
+  }
+
+// Temporary user
+
+  export async function createTemporaryUser(userId: number) {
+    const kv = await getKv();
+    
+    const newUserData: UserData = {
+      nickName: "",
+      name: "",
+      birthday: "",
+      school: "",
+      class: "",
+      courses: "",
+      hwoRegistered: "",
+      notes: "",
+    };
+
+    await kv.set(["ViBot", "tempUsers:", userId], newUserData, { 
+      expireIn: REGISTRATION_TIMEOUT
+    });
+  }
+
+  export async function updateTemporaryUser<Key extends keyof UserData>(
+    userId: number,
+    dataUpdate: Key,
+    valueUpdate: UserData[Key],
+  ) {
+    const kv = await getKv();
+    const currentData = await kv.get<UserData>(["ViBot", "tempUsers:", userId]);
+    
+    if (currentData && currentData.value) {
+      currentData.value[dataUpdate] = valueUpdate;
+      await kv.set(["ViBot", "tempUsers:", userId], currentData.value, {
+        expireIn: REGISTRATION_TIMEOUT
+      });
+    }
+  }
+
+  export async function confirmRegistration(userId: number) {
+    const kv = await getKv();
+    
+    const tempUser = await kv.get<UserData>(["ViBot", "tempUsers:", userId]);
+    
+    if (tempUser.value) {
+      await kv.set(["ViBot", "userId:", userId], tempUser.value);
+      await kv.delete(["ViBot", "tempUsers:", userId]);
+      await addStudent(userId);
+    }
+  }
+
+  export async function hasTemporaryRegistration(userId: number): Promise<boolean> {
+    const kv = await getKv();
+    const tempUser = await kv.get<UserData>(["ViBot", "tempUsers:", userId]);
+    return !!tempUser.value;
   }
