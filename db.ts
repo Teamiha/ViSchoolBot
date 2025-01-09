@@ -74,37 +74,37 @@ export async function createNewUser(userId: number) {
     }
   }
 
-  export async function grantAccess(userId: number) {
+  export async function addStudent(userId: number) {
     const kv = await getKv();
   
-    const result = await kv.get<number[]>(["ViBot", "accessList"]);
-    const accessList = result.value || [];
+    const result = await kv.get<number[]>(["ViBot", "studentList"]);
+    const studentList = result.value || [];
   
-    if (!accessList.includes(userId)) {
-      accessList.push(userId);
-      await kv.set(["ViBot", "accessList"], accessList);
+    if (!studentList.includes(userId)) {
+      studentList.push(userId);
+      await kv.set(["ViBot", "studentList"], studentList);
     }
   }
 
-  export async function revokeAccess(userId: number) {
+  export async function removeStudent(userId: number) {
     const kv = await getKv();
   
-    const result = await kv.get<number[]>(["ViBot", "accessList"]);
-    const accessList = result.value || [];
+    const result = await kv.get<number[]>(["ViBot", "studentList"]);
+    const studentList = result.value || [];
   
-    const updatedList = accessList.filter((id) => id !== userId);
+    const updatedList = studentList.filter((id) => id !== userId);
   
-    await kv.set(["ViBot", "accessList"], updatedList);
+    await kv.set(["ViBot", "studentList"], updatedList);
     await kv.delete(["ViBot", "userId:", userId]);
   }
 
-  export async function hasAccess(userId: number): Promise<boolean> {
+  export async function isStudent(userId: number): Promise<boolean> {
     const kv = await getKv();
   
-    const result = await kv.get<number[]>(["ViBot", "accessList"]);
-    const accessList = result.value || [];
+    const result = await kv.get<number[]>(["ViBot", "studentList"]);
+    const studentList = result.value || [];
   
-    return accessList.includes(userId);
+    return studentList.includes(userId);
   }
   
   export async function getAllUserNames(): Promise<string[]> {
@@ -127,4 +127,34 @@ export async function createNewUser(userId: number) {
   ) {
     const user = await getUser(userId);
     return (user.value as UserData)[parametr];
+  }
+
+
+  
+  export async function blockUser(userId: number) {
+    const kv = await getKv();
+    const result = await kv.get<number[]>(["ViBot", "blocked"]);
+    const blockedList = result.value || [];
+
+    if (!blockedList.includes(userId)) {
+      blockedList.push(userId);
+      await kv.set(["ViBot", "blocked"], blockedList);
+    }
+  }
+
+  export async function unblockUser(userId: number) {
+    const kv = await getKv();
+    const result = await kv.get<number[]>(["ViBot", "blocked"]);
+    const blockedList = result.value || [];
+
+    const updatedList = blockedList.filter((id) => id !== userId);
+    await kv.set(["ViBot", "blocked"], updatedList);
+  }
+
+  export async function isUserBlocked(userId: number): Promise<boolean> {
+    const kv = await getKv();
+    const result = await kv.get<number[]>(["ViBot", "blocked"]);
+    const blockedList = result.value || [];
+
+    return blockedList.includes(userId);
   }

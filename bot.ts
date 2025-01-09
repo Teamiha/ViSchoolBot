@@ -3,12 +3,17 @@ import { BOT_TOKEN } from "./config.ts";
 
 export interface SessionData {
     stage:
-      | "anonMessage"
+      | "null"
+      | "startRegistration"
+      | "askHwoRegistered"
       | "askName"
       | "askBirthDate"
-      | "null"
-      | "addUser"
-      | "addTask";
+      | "askSchool"
+      | "askClass"
+      | "askCourses"
+      | "askNotes"
+      | "sendHomework"
+      | "makeNotes";
   }
 
   export type MyContext = Context & SessionFlavor<SessionData>;
@@ -21,9 +26,22 @@ export interface SessionData {
     }),
   }));
 
+
+  
   bot.command("start", (ctx) => {
     ctx.session.stage = "null";
     ctx.reply("Привет! Я бот для управления задачами. Чтобы начать, отправь мне сообщение.");
   });
+
+
+
+
+
+
+
+
+
+
+
 
 bot.start();
