@@ -1,5 +1,6 @@
 import { Bot, Context, session, SessionFlavor } from "@grammyjs/bot";
 import { BOT_TOKEN } from "./config.ts";
+import { botStart } from "./botModules/botStart.ts";
 
 export interface SessionData {
   stage:
@@ -26,11 +27,9 @@ bot.use(session({
   }),
 }));
 
-bot.command("start", (ctx) => {
+bot.command("start", async (ctx) => {
   ctx.session.stage = "null";
-  ctx.reply(
-    "Привет! Я бот для управления задачами. Чтобы начать, отправь мне сообщение.",
-  );
+  await botStart(ctx);
 });
 
 bot.start();

@@ -133,6 +133,7 @@ export async function isStudent(userId: number): Promise<boolean> {
 }
 
 // Blocked user
+
 export async function blockUser(userId: number) {
   const kv = await getKv();
   const result = await kv.get<number[]>(["ViBot", "blocked"]);
