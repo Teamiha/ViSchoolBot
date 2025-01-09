@@ -1,7 +1,7 @@
 import { Bot, Context, session, SessionFlavor } from "@grammyjs/bot";
-import { BOT_TOKEN } from "./config.ts";
+import { BOT_TOKEN } from "./.env";
 import { botStart } from "./botModules/botStart.ts";
-import { updateTemporaryUser } from "./db.ts";
+import { updateTemporaryUser, addPaymentConfirmationRequest } from "./db.ts";
 
 export interface SessionData {
   stage:
@@ -85,12 +85,18 @@ bot.on("message:text", async (ctx) => {
 
 
 bot.on("message:photo", async (ctx) => {
-    if (ctx.session.stage === "paymentProcess") {
+
+    if (ctx.session.stage === "null") {
+        console.log("Отправлено фото");
+
+
+} else if (ctx.session.stage === "paymentProcess") {
   const caption = ctx.message.caption;
   
-  console.log("Отправлено фото");
+  
   ctx.session.stage = "null";
-  await ctx.reply("Спасибо за регистрацию!");
+  await addPaymentConfirmationRequest(ctx.from?.id);
+  await ctx.reply("Спасибо! После подтверждения оплаты, вам прийдет сообщение о завершении регистрации.");
 }
 });
 
