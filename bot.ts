@@ -1,5 +1,5 @@
 import { Bot, Context, session, SessionFlavor } from "@grammyjs/bot";
-import { BOT_TOKEN } from "./.env";
+import { BOT_TOKEN } from "./config.ts";
 import { botStart } from "./botModules/botStart.ts";
 import { updateTemporaryUser, addPaymentConfirmationRequest } from "./db.ts";
 
@@ -21,6 +21,10 @@ export interface SessionData {
 }
 
 export type MyContext = Context & SessionFlavor<SessionData>;
+
+if (!BOT_TOKEN) {
+    throw new Error("BOT_TOKEN is not defined");
+}
 
 const bot = new Bot<MyContext>(BOT_TOKEN);
 
