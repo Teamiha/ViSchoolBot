@@ -15,7 +15,6 @@ export async function botStart(ctx: MyContext) {
   if (userId) {
     const userIsStudent = await isStudent(userId);
 
-    // Добавить рандомные комплименты.
     if (userId === Number(VIID) || userId === Number(SVETLOVID)) {
       await ctx.reply(
         `Добро пожаловать Виктория! Помни что ${getRandomCompliment()}`,
@@ -33,9 +32,9 @@ export async function botStart(ctx: MyContext) {
       return;
     }
 
-    if (userHasAccess === true || userId === Number(SUPERUSER)) {
+    if (userIsStudent === true) {
       await ctx.reply("Добро пожаловать! Выберите действие:", {
-        reply_markup: startKeyboard,
+        reply_markup: studentKeyboard,
       });
     }
   }
