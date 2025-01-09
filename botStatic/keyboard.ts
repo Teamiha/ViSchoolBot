@@ -10,14 +10,14 @@ export const registrationKeyboard = new InlineKeyboard()
   .row()
   .text("О боте", "aboutBot");
 
-  export const studentKeyboard = new InlineKeyboard()
+export const studentKeyboard = new InlineKeyboard()
   .text("Сдать домашнее задание", "sendHomework")
   .row()
   .text("Повторно получить приглашение в группу", "groupInvite")
   .row()
   .text("Завершить обучение", "endLearning");
 
-  export const adminKeyboard = new InlineKeyboard()
+export const adminKeyboard = new InlineKeyboard()
   .text("Выгрузка базы данных", "exportDB")
   .row()
   .text("Проверить домашние задания", "checkHomework")
