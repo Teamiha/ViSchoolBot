@@ -1,5 +1,7 @@
 export const VIID = 454029119;
-export const SVETLOVID = 526827458;
+// export const SVETLOVID = 526827458;
+
+export const SVETLOVID = 5268274;
 
 import { load } from "https://deno.land/std/dotenv/mod.ts";
 

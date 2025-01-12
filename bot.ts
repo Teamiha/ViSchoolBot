@@ -1,12 +1,14 @@
 import { Bot, Context, session, SessionFlavor } from "@grammyjs/bot";
 import { BOT_TOKEN } from "./config.ts";
 import { botStart } from "./botModules/botStart.ts";
-import { updateTemporaryUser, addPaymentConfirmationRequest } from "./db.ts";
+import { updateTemporaryUser,
+       addPaymentConfirmationRequest,
+       confirmRegistration,
+       createTemporaryUser } from "./db.ts";
 
 export interface SessionData {
   stage:
     | "null"
-    | "startRegistration"
     | "askHwoRegistered"
     | "askName"
     | "askBirthDate"
@@ -39,6 +41,17 @@ bot.command("start", async (ctx) => {
   await botStart(ctx);
 });
 
+bot.callbackQuery("startRegistration", async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await createTemporaryUser(ctx.from?.id);
+    ctx.session.stage = "askName";
+    await ctx.reply(
+        "Начат процесс регистрации.\n" +
+        "Пожалуйста, введите все данные и проведите оплату за обучение в течении 30 минут.\n" +
+        "Если не успеете, то придется пройти регистрацию заново.\n\n" +
+        "Напишите имя учащегося:"
+    );
+});
 
 
 bot.on("message:text", async (ctx) => {
@@ -100,6 +113,7 @@ bot.on("message:photo", async (ctx) => {
   
   ctx.session.stage = "null";
   await addPaymentConfirmationRequest(ctx.from?.id);
+  await confirmRegistration(ctx.from?.id);
   await ctx.reply("Спасибо! После подтверждения оплаты, вам прийдет сообщение о завершении регистрации.");
 }
 });
