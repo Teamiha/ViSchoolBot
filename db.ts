@@ -2,6 +2,7 @@ import { getKv } from "./botStatic/kvClient.ts";
 import { REGISTRATION_TIMEOUT } from "./botStatic/const.ts";
 
 export interface UserData {
+  paymentInProcess: boolean;
   nickName: string;
   name: string;
   birthday: string;
@@ -16,6 +17,7 @@ export async function createNewUser(userId: number) {
   const kv = await getKv();
 
   const newUserData: UserData = {
+    paymentInProcess: false,
     nickName: "",
     name: "",
     birthday: "",
@@ -32,12 +34,12 @@ export async function createNewUser(userId: number) {
 export async function getUser(userId: number) {
   const kv = await getKv();
   const user = await kv.get<UserData>(["ViBot", "userId:", userId]);
-  if (!user.value) {
-    await createNewUser(userId);
-    const newUserData = await kv.get(["ViBot", "userId:", userId]);
-    console.log("new user");
-    return newUserData;
-  }
+  //   if (!user.value) {
+  //     await createNewUser(userId);
+  //     const newUserData = await kv.get(["ViBot", "userId:", userId]);
+  //     console.log("new user");
+  //     return newUserData;
+  //   }
   return user;
 }
 
@@ -97,39 +99,48 @@ export async function getUserParametr<Key extends keyof UserData>(
   return (user.value as UserData)[parametr];
 }
 
-// Student status management
-
-export async function addStudent(userId: number) {
-  const kv = await getKv();
-
-  const result = await kv.get<number[]>(["ViBot", "studentList"]);
-  const studentList = result.value || [];
-
-  if (!studentList.includes(userId)) {
-    studentList.push(userId);
-    await kv.set(["ViBot", "studentList"], studentList);
+export async function getUserPaymentInProcess(userId: number) {
+  try {
+    const user = await getUser(userId);
+    return (user.value as UserData).paymentInProcess;
+  } catch (error) {
+    return false;
   }
 }
 
-export async function removeStudent(userId: number) {
+// Student status management
+
+export async function addActiveStudent(userId: number) {
   const kv = await getKv();
 
-  const result = await kv.get<number[]>(["ViBot", "studentList"]);
-  const studentList = result.value || [];
+  const result = await kv.get<number[]>(["ViBot", "activeStudentList"]);
+  const activeStudentList = result.value || [];
 
-  const updatedList = studentList.filter((id) => id !== userId);
-
-  await kv.set(["ViBot", "studentList"], updatedList);
-  await kv.delete(["ViBot", "userId:", userId]);
+  if (!activeStudentList.includes(userId)) {
+    activeStudentList.push(userId);
+    await kv.set(["ViBot", "activeStudentList"], activeStudentList);
+  }
 }
 
-export async function isStudent(userId: number): Promise<boolean> {
+export async function removeActiveStudent(userId: number) {
   const kv = await getKv();
 
-  const result = await kv.get<number[]>(["ViBot", "studentList"]);
-  const studentList = result.value || [];
+  const result = await kv.get<number[]>(["ViBot", "activeStudentList"]);
+  const activeStudentList = result.value || [];
 
-  return studentList.includes(userId);
+  const updatedList = activeStudentList.filter((id) => id !== userId);
+
+  await kv.set(["ViBot", "activeStudentList"], updatedList);
+  //   await kv.delete(["ViBot", "userId:", userId]);
+}
+
+export async function isActiveStudent(userId: number): Promise<boolean> {
+  const kv = await getKv();
+
+  const result = await kv.get<number[]>(["ViBot", "activeStudentList"]);
+  const activeStudentList = result.value || [];
+
+  return activeStudentList.includes(userId);
 }
 
 // Blocked user
@@ -168,6 +179,7 @@ export async function createTemporaryUser(userId: number) {
   const kv = await getKv();
 
   const newUserData: UserData = {
+    paymentInProcess: false,
     nickName: "",
     name: "",
     birthday: "",
@@ -207,8 +219,12 @@ export async function confirmRegistration(userId: number) {
   if (tempUser.value) {
     await kv.set(["ViBot", "userId:", userId], tempUser.value);
     await kv.delete(["ViBot", "tempUsers:", userId]);
-    await addStudent(userId);
   }
+}
+
+export async function deleteTemporaryUser(userId: number) {
+  const kv = await getKv();
+  await kv.delete(["ViBot", "tempUsers:", userId]);
 }
 
 export async function hasTemporaryRegistration(

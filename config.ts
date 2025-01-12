@@ -14,5 +14,3 @@ if (!BOT_TOKEN) {
 }
 
 export { BOT_TOKEN };
-
-

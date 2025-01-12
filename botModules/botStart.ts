@@ -1,5 +1,11 @@
 import { MyContext } from "../bot.ts";
-import { getUserParametr, isStudent } from "../db.ts";
+import {
+  deleteTemporaryUser,
+  getUserParametr,
+  getUserPaymentInProcess,
+  hasTemporaryRegistration,
+  isActiveStudent,
+} from "../db.ts";
 import {
   adminKeyboard,
   registrationKeyboard,
@@ -10,10 +16,11 @@ import { getRandomCompliment } from "../botStatic/compliment.ts";
 
 export async function botStart(ctx: MyContext) {
   const userId = ctx.from?.id;
-  const userName = ctx.from?.username;
 
   if (userId) {
-    const userIsStudent = await isStudent(userId);
+    const userIsStudent = await isActiveStudent(userId);
+    const userIsTemporary = await hasTemporaryRegistration(userId);
+    const hasPaymentInProcess = await getUserPaymentInProcess(userId);
 
     if (userId === Number(VIID) || userId === Number(SVETLOVID)) {
       await ctx.reply(
@@ -21,6 +28,25 @@ export async function botStart(ctx: MyContext) {
         {
           reply_markup: adminKeyboard,
         },
+      );
+      return;
+    }
+
+    if (userIsTemporary) {
+      await deleteTemporaryUser(userId);
+      await ctx.reply(
+        "Видимо вы не завершили прошлую регистрацию.\n" +
+          "Сожалеем, но вам придётся начать заново.",
+        {
+          reply_markup: registrationKeyboard,
+        },
+      );
+      return;
+    }
+
+    if (hasPaymentInProcess) {
+      await ctx.reply(
+        "Пожалуйста, подождите, пока администратор подтвердит вашу оплату.",
       );
       return;
     }
