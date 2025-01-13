@@ -1,7 +1,7 @@
 import { InlineKeyboard } from "@grammyjs/bot";
 import { getKv } from "./kvClient.ts";
 import { UserData } from "../db.ts";
-
+import { getCourseNames } from "../db.ts";
 export const registrationKeyboard = new InlineKeyboard()
   .text("Регистрация", "startRegistration")
   .row()
@@ -25,6 +25,15 @@ export const adminKeyboard = new InlineKeyboard()
   .row()
   .text("Админский раздел", "adminZone");
 
+export const courseKeyboard = new InlineKeyboard()
+  .text("Добавить курс", "addCourse")
+  .row()
+  .text("Удалить курс", "removeCourse")
+  .row()
+  .text("Список курсов", "listCourses");
+
+
+  
 export async function createPaymentConfirmationKeyboard(): Promise<{
   keyboard: InlineKeyboard;
   isEmpty: boolean;
@@ -50,6 +59,26 @@ export async function createPaymentConfirmationKeyboard(): Promise<{
       const buttonText = `ID: ${userId} | @${userName} | ${name}`;
       keyboard.text(buttonText, `confirm_payment:${userId}`).row();
     }
+  }
+
+  return { keyboard: keyboard, isEmpty: false };
+}
+
+export async function createCoursesSelectionKeyboard(): Promise<{
+  keyboard: InlineKeyboard;
+  isEmpty: boolean;
+}> {
+//   const kv = await getKv();
+  const courses = await getCourseNames();
+
+  const keyboard = new InlineKeyboard();
+
+  if (courses.length === 0) {
+    return { keyboard: keyboard, isEmpty: true };
+  }
+
+  for (const course of courses) {
+    keyboard.text(course, `select_course:${course}`).row();
   }
 
   return { keyboard: keyboard, isEmpty: false };

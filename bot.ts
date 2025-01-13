@@ -2,7 +2,7 @@ import { Bot, Context, session, SessionFlavor } from "@grammyjs/bot";
 import { BOT_TOKEN } from "./config.ts";
 import { botStart } from "./botModules/botStart.ts";
 import { adminKeyboard } from "./botStatic/keyboard.ts";
-import { botRegistration } from "./botModules/botRegistration.ts";
+import { botRegistration, botChoseCourse } from "./botModules/botRegistration.ts";
 import {
   botCheckPayments,
   botConfirmPayment,
@@ -67,6 +67,12 @@ bot.callbackQuery(/^final_confirm_payment:(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   await botFinalConfirmPayment(ctx);
 });
+
+// В файле с обработчиками
+bot.callbackQuery(/^select_course:(.+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await botChoseCourse(ctx);
+  });
 
 bot.callbackQuery("cancel_confirmation", async (ctx) => {
   await ctx.answerCallbackQuery();

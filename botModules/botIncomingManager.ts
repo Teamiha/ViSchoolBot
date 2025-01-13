@@ -7,6 +7,7 @@ import {
   updateUser,
 } from "../db.ts";
 import { SVETLOVID } from "../config.ts";
+import { createCoursesSelectionKeyboard } from "../botStatic/keyboard.ts";
 
 export async function botTextProcessing(ctx: MyContext) {
   if (!ctx.message?.text) return;
@@ -37,14 +38,12 @@ export async function botTextProcessing(ctx: MyContext) {
     const messageText = ctx.message.text;
     await updateTemporaryUser(ctx.from?.id, "class", messageText);
     ctx.session.stage = "askCourses";
-    await ctx.reply("Напишите на какой курс записывается учащийся");
-  } else if (ctx.session.stage === "askCourses") {
-    const messageText = ctx.message.text;
-    await updateTemporaryUser(ctx.from?.id, "courses", messageText);
-    ctx.session.stage = "paymentProcess";
-    await ctx.reply(
-      "Пожалуйста, отправьте фото с квитанцией оплаты (!!! ВСТАВИТЬ МЕТОДЫ ОПЛАТЫ!!!)",
-    );
+    const { keyboard, isEmpty } = await createCoursesSelectionKeyboard();
+    if (isEmpty) {
+      await ctx.reply("Курсов нет, напишите администратору");
+    } else {
+      await ctx.reply("Выберете курс для учащегося", { reply_markup: keyboard });
+    }
   } else {
     await ctx.reply("Введите команду /start для начала.");
   }

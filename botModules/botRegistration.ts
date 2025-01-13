@@ -1,4 +1,4 @@
-import { createTemporaryUser, updateTemporaryUser } from "../db.ts";
+import { createTemporaryUser, updateTemporaryUser, getCourseByName } from "../db.ts";
 import { MyContext } from "../bot.ts";
 
 export async function botRegistration(ctx: MyContext) {
@@ -18,3 +18,21 @@ export async function botRegistration(ctx: MyContext) {
       "Напишите имя учащегося:",
   );
 }
+
+export async function botChoseCourse(ctx: MyContext) {
+    const userId = ctx.from?.id;
+    const courseName = ctx.match?.[1];
+    
+    if (userId && courseName) {
+        const course = await getCourseByName(courseName);
+        if (course) {
+            await updateTemporaryUser(userId, "courses", [course]);
+        }
+    }
+
+    ctx.session.stage = "paymentProcess";
+    await ctx.reply(
+      "Пожалуйста, отправьте фото с квитанцией оплаты (!!! ВСТАВИТЬ МЕТОДЫ ОПЛАТЫ!!!)",
+    );
+}
+

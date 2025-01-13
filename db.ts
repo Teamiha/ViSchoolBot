@@ -8,9 +8,14 @@ export interface UserData {
   birthday: string;
   school: string;
   class: string;
-  courses: string;
+  courses: Course[];
   hwoRegistered: string;
   notes: string;
+}
+
+interface Course {
+  name: string;
+  link: string;
 }
 
 export async function createNewUser(userId: number) {
@@ -23,7 +28,7 @@ export async function createNewUser(userId: number) {
     birthday: "",
     school: "",
     class: "",
-    courses: "",
+    courses: [],
     hwoRegistered: "",
     notes: "",
   };
@@ -185,7 +190,7 @@ export async function createTemporaryUser(userId: number) {
     birthday: "",
     school: "",
     class: "",
-    courses: "",
+    courses: [],
     hwoRegistered: "",
     notes: "",
   };
@@ -297,4 +302,43 @@ export async function getPaymentConfirmationRequestNames(): Promise<string[]> {
   }
 
   return names;
+}
+
+// Course management
+
+export async function addCourse(courseName: string, courseLink: string) {
+  const kv = await getKv();
+  const currentCourses = await getCourses();
+  
+  const newCourse: Course = {
+    name: courseName,
+    link: courseLink
+  };
+  
+  currentCourses.push(newCourse);
+  await kv.set(["ViBot", "courses"], currentCourses);
+}
+
+export async function removeCourse(courseName: string) {
+  const kv = await getKv();
+  const currentCourses = await getCourses();
+  
+  const updatedCourses = currentCourses.filter(course => course.name !== courseName);
+  await kv.set(["ViBot", "courses"], updatedCourses);
+}
+
+export async function getCourses(): Promise<Course[]> {
+  const kv = await getKv();
+  const result = await kv.get<Course[]>(["ViBot", "courses"]);
+  return result.value || [];
+}
+
+export async function getCourseNames(): Promise<string[]> {
+  const courses = await getCourses();
+  return courses.map(course => course.name);
+}
+
+export async function getCourseByName(courseName: string): Promise<Course | undefined> {
+  const courses = await getCourses();
+  return courses.find(course => course.name === courseName);
 }
