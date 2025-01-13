@@ -34,4 +34,23 @@ export async function deleteAllViBotRecords() {
   console.log(`\nTotal records deleted: ${deletedCount}`);
 }
 
+async function createMockUsers() {
+  const kv = await getKv();
+  for (let i = 1; i <= 10; i++) {
+    await kv.set(["ViBot", "userId:", i], {
+      paymentInProcess: true,
+      nickName: `user${i}`,
+      name: `User ${i}`,
+      birthday: "01.01.2000",
+      school: "School 1",
+      class: "10",
+      courses: "Math, Science",
+      hwoRegistered: "2024-01-01",
+      notes: "Mock user",
+    });
+  }
+}
+// createMockUsers();
 // listAllViBotRecords();
+
+// deleteAllViBotRecords();

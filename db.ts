@@ -77,19 +77,19 @@ export async function updateUser<Key extends keyof UserData>(
   }
 }
 
-export async function getAllUserNames(): Promise<string[]> {
-  const kv = await getKv();
-  const users = kv.list<UserData>({ prefix: ["ViBot", "userId:"] });
-  const names: string[] = [];
+// export async function getAllUserNamesAwaitPayConfirmation(): Promise<string[]> {
+//   const kv = await getKv();
+//   const users = kv.list<UserData>({ prefix: ["ViBot", "userId:"] });
+//   const names: string[] = [];
 
-  for await (const user of users) {
-    if (user.value && user.value.name) {
-      names.push(user.value.name);
-    }
-  }
+//   for await (const user of users) {
+//     if (user.value && user.value.name) {
+//       names.push(user.value.name);
+//     }
+//   }
 
-  return names;
-}
+//   return names;
+// }
 
 export async function getUserParametr<Key extends keyof UserData>(
   userId: number,

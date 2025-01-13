@@ -1,4 +1,10 @@
-import { Bot, Context, session, SessionFlavor } from "@grammyjs/bot";
+import {
+  Bot,
+  Context,
+  InlineKeyboard,
+  session,
+  SessionFlavor,
+} from "@grammyjs/bot";
 import { BOT_TOKEN } from "./config.ts";
 import { botStart } from "./botModules/botStart.ts";
 import {
@@ -8,6 +14,10 @@ import {
   updateTemporaryUser,
   updateUser,
 } from "./db.ts";
+import {
+  adminKeyboard,
+  createPaymentConfirmationKeyboard,
+} from "./botStatic/keyboard.ts";
 
 import { deleteAllViBotRecords, listAllViBotRecords } from "./admin.ts";
 
@@ -59,6 +69,41 @@ bot.callbackQuery("startRegistration", async (ctx) => {
       "Если не успеете, то придется пройти регистрацию заново.\n\n" +
       "Напишите имя учащегося:",
   );
+});
+
+bot.callbackQuery("checkPayments", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const keyboard = await createPaymentConfirmationKeyboard();
+  await ctx.reply("Список пользователей, ожидающих подтверждения оплаты:", {
+    reply_markup: keyboard,
+  });
+});
+
+bot.callbackQuery(/^confirm_payment:(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const userId = Number(ctx.match[1]);
+
+  // Здесь можно добавить дополнительное подтверждение
+  await ctx.reply(
+    `Вы уверены, что хотите подтвердить оплату для пользователя ${userId}?`,
+    {
+      reply_markup: new InlineKeyboard()
+        .text("Да", `final_confirm_payment:${userId}`)
+        .text("Нет", "cancel_confirmation"),
+    },
+  );
+});
+
+bot.callbackQuery(/^final_confirm_payment:(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const userId = Number(ctx.match[1]);
+  await updateUser(userId, "paymentInProcess", false);
+  await ctx.reply("Оплата подтверждена!", { reply_markup: adminKeyboard });
+});
+
+bot.callbackQuery("cancel_confirmation", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.reply("Действие отменено", { reply_markup: adminKeyboard });
 });
 
 bot.on("message:text", async (ctx) => {

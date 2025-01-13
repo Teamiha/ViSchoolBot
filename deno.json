@@ -4,7 +4,8 @@
   "license": "",
   "tasks": {
     "dev": "DEV=true deno run -A --unstable-kv --allow-env ./bot.ts",
-    "deploy": "deno -A --unstable-kv --allow-env ./main.ts"
+    "deploy": "deno -A --unstable-kv --allow-env ./main.ts",
+    "admin": "DEV=true deno run -A --unstable-kv --allow-env ./admin.ts"
   },
   "importMap": "./import-map.json"
 }
