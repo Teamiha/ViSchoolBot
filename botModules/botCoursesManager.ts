@@ -23,10 +23,12 @@ export async function botAddCourseExecute(ctx: MyContext) {
     }
     
     await addCourse(courseName, courseLink);
+    await ctx.reply("Курс добавлен!", {
+        reply_markup: courseKeyboard
+    });
 }
 
 export async function botCourseManager(ctx: MyContext) {
-    await ctx.reply("Управление курсами:", {
-        reply_markup: courseKeyboard
-    });
+    await ctx.editMessageText("Управление курсами:");
+    await ctx.editMessageReplyMarkup({ reply_markup: courseKeyboard });
 }

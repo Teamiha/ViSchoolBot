@@ -1,7 +1,7 @@
 import { Bot, Context, session, SessionFlavor } from "@grammyjs/bot";
 import { BOT_TOKEN } from "./config.ts";
 import { botStart } from "./botModules/botStart.ts";
-import { adminKeyboard } from "./botStatic/keyboard.ts";
+import { adminKeyboard, backToAdminMain } from "./botStatic/keyboard.ts";
 import { botRegistration, botChoseCourse } from "./botModules/botRegistration.ts";
 import {
   botCheckPayments,
@@ -69,6 +69,11 @@ bot.callbackQuery("checkPayments", async (ctx) => {
 bot.callbackQuery("manageCourses", async (ctx) => {
     await ctx.answerCallbackQuery();
     await botCourseManager(ctx);
+});
+
+bot.callbackQuery("backToAdminMain", async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await backToAdminMain(ctx);
 });
 
 bot.callbackQuery(/^confirm_payment:(\d+)$/, async (ctx) => {

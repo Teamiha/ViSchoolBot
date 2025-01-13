@@ -2,6 +2,9 @@ import { InlineKeyboard } from "@grammyjs/bot";
 import { getKv } from "./kvClient.ts";
 import { UserData } from "../db.ts";
 import { getCourseNames } from "../db.ts";
+import { MyContext } from "../bot.ts";
+
+
 export const registrationKeyboard = new InlineKeyboard()
   .text("Регистрация", "startRegistration")
   .row()
@@ -30,7 +33,9 @@ export const courseKeyboard = new InlineKeyboard()
   .row()
   .text("Удалить курс", "removeCourse")
   .row()
-  .text("Список курсов", "listCourses");
+  .text("Список курсов", "listCourses")
+  .row()
+  .text("Назад", "backToAdminMain");
 
 
   
@@ -82,4 +87,9 @@ export async function createCoursesSelectionKeyboard(): Promise<{
   }
 
   return { keyboard: keyboard, isEmpty: false };
+}
+
+export async function backToAdminMain(ctx: MyContext){
+    await ctx.editMessageText("Админский раздел:");
+    await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
 }
