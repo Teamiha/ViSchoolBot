@@ -53,8 +53,10 @@ async function createMockUsers() {
 
 async function addMockUsersToPaymentConfirmationRequests() {
   const kv = await getKv();
-  const existingRequests = (await kv.get<number[]>(["ViBot", "paymentConfirmationRequests"])).value || [];
-  
+  const existingRequests =
+    (await kv.get<number[]>(["ViBot", "paymentConfirmationRequests"])).value ||
+    [];
+
   // Add mock users (1-10) to the requests list
   const updatedRequests = [...existingRequests];
   for (let i = 1; i <= 10; i++) {
@@ -62,13 +64,13 @@ async function addMockUsersToPaymentConfirmationRequests() {
       updatedRequests.push(i);
     }
   }
-  
+
   await kv.set(["ViBot", "paymentConfirmationRequests"], updatedRequests);
   console.log("Added mock users to payment confirmation requests");
 }
 
 // createMockUsers();
-// listAllViBotRecords();
+listAllViBotRecords();
 
 // deleteAllViBotRecords();
 // addMockUsersToPaymentConfirmationRequests();

@@ -11,15 +11,17 @@ import {
   addPaymentConfirmationRequest,
   confirmRegistration,
   createTemporaryUser,
+  getUser,
+  removePaymentConfirmationRequest,
   updateTemporaryUser,
   updateUser,
-  removePaymentConfirmationRequest,
+  addActiveStudent,
 } from "./db.ts";
 import {
   adminKeyboard,
   createPaymentConfirmationKeyboard,
 } from "./botStatic/keyboard.ts";
-
+import { SVETLOVID } from "./config.ts";
 
 export interface SessionData {
   stage:
@@ -73,9 +75,11 @@ bot.callbackQuery("startRegistration", async (ctx) => {
 
 bot.callbackQuery("checkPayments", async (ctx) => {
   const { keyboard, isEmpty } = await createPaymentConfirmationKeyboard();
-  
+
   if (isEmpty) {
-    await ctx.reply("На данный момент нет пользователей, ожидающих подтверждения оплаты.");
+    await ctx.reply(
+      "На данный момент нет пользователей, ожидающих подтверждения оплаты.",
+    );
     return;
   }
 
@@ -102,9 +106,20 @@ bot.callbackQuery(/^confirm_payment:(\d+)$/, async (ctx) => {
 bot.callbackQuery(/^final_confirm_payment:(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   const userId = Number(ctx.match[1]);
+  
+  // Обновляем статус оплаты
   await updateUser(userId, "paymentInProcess", false);
   await removePaymentConfirmationRequest(userId);
+  await addActiveStudent(userId);
+  
+  // Отправляем сообщение администратору
   await ctx.reply("Оплата подтверждена!", { reply_markup: adminKeyboard });
+  
+  // Отправляем сообщение пользователю
+  await ctx.api.sendMessage(
+    userId,
+    "Ваша оплата была подтверждена! Нажмите /start чтобы попасть в меню учащегося"
+  );
 });
 
 bot.callbackQuery("cancel_confirmation", async (ctx) => {
@@ -155,12 +170,32 @@ bot.on("message:photo", async (ctx) => {
   if (ctx.session.stage === "null") {
     console.log("Отправлено фото");
   } else if (ctx.session.stage === "paymentProcess") {
-    const caption = ctx.message.caption;
+    const userId = ctx.from?.id;
 
     ctx.session.stage = "null";
     await confirmRegistration(ctx.from?.id);
     await addPaymentConfirmationRequest(ctx.from?.id);
     await updateUser(ctx.from?.id, "paymentInProcess", true);
+
+    // Получаем данные пользователя
+    const userData = await getUser(userId);
+    const userNickname = userData.value?.nickName || "Нет username";
+    const userName = userData.value?.name || "Нет имени";
+
+    // Пересылаем фото администратору
+    await ctx.api.forwardMessage(
+      SVETLOVID,
+      ctx.chat.id,
+      ctx.message.message_id,
+    );
+
+    // Отправляем сообщение администратору
+    await ctx.api.sendMessage(
+      SVETLOVID,
+      `Ура! От пользователя (ID: ${userId}, @${userNickname}, ${userName}) пришла оплата.\n` +
+        `Как проверишь, подтверди её факт в администраторском разделе "Подтвердить оплату".`,
+    );
+
     await ctx.reply(
       "Спасибо! После подтверждения оплаты, вам прийдет сообщение о завершении регистрации.",
     );
@@ -168,5 +203,3 @@ bot.on("message:photo", async (ctx) => {
 });
 
 bot.start();
-
-

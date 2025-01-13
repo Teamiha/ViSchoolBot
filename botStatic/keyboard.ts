@@ -21,7 +21,7 @@ export const adminKeyboard = new InlineKeyboard()
   .row()
   .text("Проверить домашние задания", "checkHomework")
   .row()
-  .text("Заблокировать пользователя", "blockUser")
+  .text("Управление курсами", "manageCourses")
   .row()
   .text("Админский раздел", "adminZone");
 
@@ -35,9 +35,9 @@ export async function createPaymentConfirmationKeyboard(): Promise<{
     "paymentConfirmationRequests",
   ]);
   const requestsList = result.value || [];
-  
+
   const keyboard = new InlineKeyboard();
-  
+
   if (requestsList.length === 0) {
     return { keyboard: keyboard, isEmpty: true };
   }
@@ -51,6 +51,6 @@ export async function createPaymentConfirmationKeyboard(): Promise<{
       keyboard.text(buttonText, `confirm_payment:${userId}`).row();
     }
   }
-  
+
   return { keyboard: keyboard, isEmpty: false };
 }
