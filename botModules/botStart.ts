@@ -1,7 +1,6 @@
 import { MyContext } from "../bot.ts";
 import {
   deleteTemporaryUser,
-  getUserParametr,
   getUserPaymentInProcess,
   hasTemporaryRegistration,
   isActiveStudent,
