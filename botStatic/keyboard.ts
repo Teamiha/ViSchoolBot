@@ -25,17 +25,22 @@ export const adminKeyboard = new InlineKeyboard()
   .row()
   .text("Админский раздел", "adminZone");
 
-export async function createPaymentConfirmationKeyboard(): Promise<
-  InlineKeyboard
-> {
+export async function createPaymentConfirmationKeyboard(): Promise<{
+  keyboard: InlineKeyboard;
+  isEmpty: boolean;
+}> {
   const kv = await getKv();
   const result = await kv.get<number[]>([
     "ViBot",
     "paymentConfirmationRequests",
   ]);
   const requestsList = result.value || [];
-
+  
   const keyboard = new InlineKeyboard();
+  
+  if (requestsList.length === 0) {
+    return { keyboard: keyboard, isEmpty: true };
+  }
 
   for await (const userId of requestsList) {
     const userData = await kv.get<UserData>(["ViBot", "userId:", userId]);
@@ -46,6 +51,6 @@ export async function createPaymentConfirmationKeyboard(): Promise<
       keyboard.text(buttonText, `confirm_payment:${userId}`).row();
     }
   }
-
-  return keyboard;
+  
+  return { keyboard: keyboard, isEmpty: false };
 }

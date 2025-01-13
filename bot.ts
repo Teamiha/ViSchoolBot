@@ -13,13 +13,13 @@ import {
   createTemporaryUser,
   updateTemporaryUser,
   updateUser,
+  removePaymentConfirmationRequest,
 } from "./db.ts";
 import {
   adminKeyboard,
   createPaymentConfirmationKeyboard,
 } from "./botStatic/keyboard.ts";
 
-import { deleteAllViBotRecords, listAllViBotRecords } from "./admin.ts";
 
 export interface SessionData {
   stage:
@@ -72,8 +72,13 @@ bot.callbackQuery("startRegistration", async (ctx) => {
 });
 
 bot.callbackQuery("checkPayments", async (ctx) => {
-  await ctx.answerCallbackQuery();
-  const keyboard = await createPaymentConfirmationKeyboard();
+  const { keyboard, isEmpty } = await createPaymentConfirmationKeyboard();
+  
+  if (isEmpty) {
+    await ctx.reply("На данный момент нет пользователей, ожидающих подтверждения оплаты.");
+    return;
+  }
+
   await ctx.reply("Список пользователей, ожидающих подтверждения оплаты:", {
     reply_markup: keyboard,
   });
@@ -98,6 +103,7 @@ bot.callbackQuery(/^final_confirm_payment:(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   const userId = Number(ctx.match[1]);
   await updateUser(userId, "paymentInProcess", false);
+  await removePaymentConfirmationRequest(userId);
   await ctx.reply("Оплата подтверждена!", { reply_markup: adminKeyboard });
 });
 
@@ -163,5 +169,4 @@ bot.on("message:photo", async (ctx) => {
 
 bot.start();
 
-// deleteAllViBotRecords();
-listAllViBotRecords();
+
