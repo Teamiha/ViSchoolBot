@@ -3,7 +3,7 @@ import { getKv } from "./kvClient.ts";
 import { UserData } from "../db.ts";
 import { getCourseNames } from "../db.ts";
 import { MyContext } from "../bot.ts";
-
+import { getRandomCompliment } from "./compliment.ts";
 
 export const registrationKeyboard = new InlineKeyboard()
   .text("Регистрация", "startRegistration")
@@ -31,9 +31,7 @@ export const adminKeyboard = new InlineKeyboard()
 export const courseKeyboard = new InlineKeyboard()
   .text("Добавить курс", "addCourse")
   .row()
-  .text("Удалить курс", "removeCourse")
-  .row()
-  .text("Список курсов", "listCourses")
+  .text("Список курсов/удаление", "listCourses")
   .row()
   .text("Назад", "backToAdminMain");
 
@@ -73,7 +71,6 @@ export async function createCoursesSelectionKeyboard(): Promise<{
   keyboard: InlineKeyboard;
   isEmpty: boolean;
 }> {
-//   const kv = await getKv();
   const courses = await getCourseNames();
 
   const keyboard = new InlineKeyboard();
@@ -86,10 +83,13 @@ export async function createCoursesSelectionKeyboard(): Promise<{
     keyboard.text(course, `select_course:${course}`).row();
   }
 
+  keyboard.text("Назад", "backToAdminMain").row();
+
   return { keyboard: keyboard, isEmpty: false };
 }
 
 export async function backToAdminMain(ctx: MyContext){
-    await ctx.editMessageText("Админский раздел:");
+    await ctx.editMessageText(`Привет! Помни что ${getRandomCompliment()}`);
     await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
 }
+

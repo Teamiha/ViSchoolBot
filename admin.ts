@@ -70,7 +70,7 @@ async function addMockUsersToPaymentConfirmationRequests() {
 }
 
 // createMockUsers();
-// listAllViBotRecords();
+listAllViBotRecords();
 
 // deleteAllViBotRecords();
 // addMockUsersToPaymentConfirmationRequests();

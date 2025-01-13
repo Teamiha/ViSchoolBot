@@ -1,8 +1,12 @@
 import { MyContext } from "../bot.ts";
-import { addCourse } from "../db.ts";
-import { courseKeyboard } from "../botStatic/keyboard.ts";
+import { addCourse, removeCourse, getCourseByName, updateTemporaryUser } from "../db.ts";
+import { courseKeyboard, createCoursesSelectionKeyboard } from "../botStatic/keyboard.ts";
+import { VIID, SVETLOVID } from "../config.ts";
 
-
+export async function botCourseManager(ctx: MyContext) {
+    await ctx.editMessageText("Управление курсами:");
+    await ctx.editMessageReplyMarkup({ reply_markup: courseKeyboard });
+}
 
 export async function botAddCourseStart(ctx: MyContext) {
     ctx.session.stage = "addCourse"
@@ -28,7 +32,46 @@ export async function botAddCourseExecute(ctx: MyContext) {
     });
 }
 
-export async function botCourseManager(ctx: MyContext) {
-    await ctx.editMessageText("Управление курсами:");
-    await ctx.editMessageReplyMarkup({ reply_markup: courseKeyboard });
+export async function botCourseList(ctx: MyContext) {
+    const { keyboard, isEmpty } = await createCoursesSelectionKeyboard();
+    if (isEmpty) {
+      await ctx.reply("Курсов нет");
+    } else {
+        await ctx.editMessageText("Список активных курсов. Нажми на курс чтобы удалить его.");
+        await ctx.editMessageReplyMarkup({ reply_markup: keyboard });
+    }
+    
+}
+
+export async function botChoseCourse(ctx: MyContext) {
+    const userId = ctx.from?.id;
+    const courseName = ctx.match?.[1];
+
+    if (userId === Number(VIID) || userId === Number(SVETLOVID)) {
+        if (courseName) {
+            await removeCourse(courseName);
+            await ctx.reply("Курс удалён!", {
+                reply_markup: courseKeyboard
+            });
+        }
+        return;
+    }
+    
+    if (userId && courseName) {
+        const course = await getCourseByName(courseName);
+        if (course) {
+            await updateTemporaryUser(userId, "courses", [course]);
+        }
+    }
+
+    ctx.session.stage = "paymentProcess";
+    await ctx.reply(
+      "Пожалуйста, отправьте фото с квитанцией оплаты \n" +
+      "Варианты оплаты: \n" +
+      `Номер карты Тинькофф:
+       5536 9138 2905 0125
+       Держатель: Виктория Алексеевна Маяковская \n` +
+      "Для зарубежных карт: \n" +
+      "https://revolut.me/ivan1fhj3"
+    );
 }
