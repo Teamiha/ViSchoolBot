@@ -8,7 +8,7 @@ import {
 } from "../db.ts";
 import { SVETLOVID } from "../config.ts";
 import { createCoursesSelectionKeyboard } from "../botStatic/keyboard.ts";
-
+import { botAddCourseExecute } from "./botCoursesManager.ts";
 export async function botTextProcessing(ctx: MyContext) {
   if (!ctx.message?.text) return;
   if (!ctx.from?.id) return;
@@ -44,6 +44,9 @@ export async function botTextProcessing(ctx: MyContext) {
     } else {
       await ctx.reply("Выберете курс для учащегося", { reply_markup: keyboard });
     }
+  } else if (ctx.session.stage === "addCourse") {
+    await botAddCourseExecute(ctx);
+    ctx.session.stage = "null";
   } else {
     await ctx.reply("Введите команду /start для начала.");
   }

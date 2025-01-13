@@ -12,6 +12,8 @@ import {
   botPhotoProcessing,
   botTextProcessing,
 } from "./botModules/botIncomingManager.ts";
+import { botAddCourseStart, botCourseManager } from "./botModules/botCoursesManager.ts";
+
 
 export interface SessionData {
   stage:
@@ -23,6 +25,7 @@ export interface SessionData {
     | "askClass"
     | "askCourses"
     | "paymentProcess"
+    | "addCourse"
     | "askNotes"
     | "sendHomework"
     | "askQuestion"
@@ -53,9 +56,19 @@ bot.callbackQuery("startRegistration", async (ctx) => {
   await botRegistration(ctx);
 });
 
+bot.callbackQuery("addCourse", async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await botAddCourseStart(ctx);
+  });
+
 bot.callbackQuery("checkPayments", async (ctx) => {
   await ctx.answerCallbackQuery();
   await botCheckPayments(ctx);
+});
+
+bot.callbackQuery("manageCourses", async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await botCourseManager(ctx);
 });
 
 bot.callbackQuery(/^confirm_payment:(\d+)$/, async (ctx) => {
