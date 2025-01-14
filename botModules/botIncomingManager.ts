@@ -1,14 +1,13 @@
 import { MyContext } from "../bot.ts";
-import {
-  addPaymentConfirmationRequest,
-  confirmRegistration,
-  getUser,
-  updateTemporaryUser,
-  updateUser,
-} from "../db.ts";
+import { getUser, updateUser } from "../DB/mainDB.ts";
 import { SVETLOVID } from "../config.ts";
 import { createCoursesSelectionKeyboard } from "../botStatic/keyboard.ts";
 import { botAddCourseExecute } from "./botCoursesManager.ts";
+import {
+  confirmRegistration,
+  updateTemporaryUser,
+} from "../DB/temporaryUserDB.ts";
+import { addPaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
 export async function botTextProcessing(ctx: MyContext) {
   if (!ctx.message?.text) return;
   if (!ctx.from?.id) return;
@@ -42,7 +41,9 @@ export async function botTextProcessing(ctx: MyContext) {
     if (isEmpty) {
       await ctx.reply("Курсов нет, напишите администратору");
     } else {
-      await ctx.reply("Выберете курс для учащегося", { reply_markup: keyboard });
+      await ctx.reply("Выберете курс для учащегося", {
+        reply_markup: keyboard,
+      });
     }
   } else if (ctx.session.stage === "addCourse") {
     await botAddCourseExecute(ctx);

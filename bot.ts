@@ -12,8 +12,12 @@ import {
   botPhotoProcessing,
   botTextProcessing,
 } from "./botModules/botIncomingManager.ts";
-import { botAddCourseStart, botCourseManager, botChoseCourse, botCourseList } from "./botModules/botCoursesManager.ts";
-
+import {
+  botAddCourseStart,
+  botChoseCourse,
+  botCourseList,
+  botCourseManager,
+} from "./botModules/botCoursesManager.ts";
 
 export interface SessionData {
   stage:
@@ -58,9 +62,9 @@ bot.callbackQuery("startRegistration", async (ctx) => {
 });
 
 bot.callbackQuery("addCourse", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await botAddCourseStart(ctx);
-  });
+  await ctx.answerCallbackQuery();
+  await botAddCourseStart(ctx);
+});
 
 bot.callbackQuery("checkPayments", async (ctx) => {
   await ctx.answerCallbackQuery();
@@ -68,18 +72,18 @@ bot.callbackQuery("checkPayments", async (ctx) => {
 });
 
 bot.callbackQuery("manageCourses", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await botCourseManager(ctx);
+  await ctx.answerCallbackQuery();
+  await botCourseManager(ctx);
 });
 
 bot.callbackQuery("backToAdminMain", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await backToAdminMain(ctx);
+  await ctx.answerCallbackQuery();
+  await backToAdminMain(ctx);
 });
 
 bot.callbackQuery("listCourses", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await botCourseList(ctx);
+  await ctx.answerCallbackQuery();
+  await botCourseList(ctx);
 });
 
 bot.callbackQuery(/^confirm_payment:(\d+)$/, async (ctx) => {
@@ -94,9 +98,9 @@ bot.callbackQuery(/^final_confirm_payment:(\d+)$/, async (ctx) => {
 
 // В файле с обработчиками
 bot.callbackQuery(/^select_course:(.+)$/, async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await botChoseCourse(ctx);
-  });
+  await ctx.answerCallbackQuery();
+  await botChoseCourse(ctx);
+});
 
 bot.callbackQuery("cancel_confirmation", async (ctx) => {
   await ctx.answerCallbackQuery();

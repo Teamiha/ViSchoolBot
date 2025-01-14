@@ -1,77 +1,92 @@
 import { MyContext } from "../bot.ts";
-import { addCourse, removeCourse, getCourseByName, updateTemporaryUser } from "../db.ts";
-import { courseKeyboard, createCoursesSelectionKeyboard } from "../botStatic/keyboard.ts";
-import { VIID, SVETLOVID } from "../config.ts";
+import {
+  addCourse,
+  getCourseByName,
+  removeCourse,
+} from "../DB/courseManagerDB.ts";
+import {
+  courseKeyboard,
+  createCoursesSelectionKeyboard,
+} from "../botStatic/keyboard.ts";
+import { SVETLOVID, VIID } from "../config.ts";
+import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
 
 export async function botCourseManager(ctx: MyContext) {
-    await ctx.editMessageText("Управление курсами:");
-    await ctx.editMessageReplyMarkup({ reply_markup: courseKeyboard });
+  await ctx.editMessageText("Управление курсами:");
+  await ctx.editMessageReplyMarkup({ reply_markup: courseKeyboard });
 }
 
 export async function botAddCourseStart(ctx: MyContext) {
-    ctx.session.stage = "addCourse"
+  ctx.session.stage = "addCourse";
 
-    await ctx.answerCallbackQuery();
-    await ctx.reply("Введи название курса, а через запятую ссылку на присоединение к нему");
+  await ctx.answerCallbackQuery();
+  await ctx.reply(
+    "Введи название курса, а через запятую ссылку на присоединение к нему",
+  );
 }
 
 export async function botAddCourseExecute(ctx: MyContext) {
-    if (!ctx.message) return;
-    const messageText = ctx.message.text;
-    if (!messageText) return;
-    const [courseName, courseLink] = messageText.split(',').map(item => item.trim());
-    
-    if (!courseName || !courseLink) {
-        await ctx.reply("Ошибка! Убедитесь, что вы ввели название курса и ссылку, разделённые запятой");
-        return;
-    }
-    
-    await addCourse(courseName, courseLink);
-    await ctx.reply("Курс добавлен!", {
-        reply_markup: courseKeyboard
-    });
+  if (!ctx.message) return;
+  const messageText = ctx.message.text;
+  if (!messageText) return;
+  const [courseName, courseLink] = messageText.split(",").map((item) =>
+    item.trim()
+  );
+
+  if (!courseName || !courseLink) {
+    await ctx.reply(
+      "Ошибка! Убедитесь, что вы ввели название курса и ссылку, разделённые запятой",
+    );
+    return;
+  }
+
+  await addCourse(courseName, courseLink);
+  await ctx.reply("Курс добавлен!", {
+    reply_markup: courseKeyboard,
+  });
 }
 
 export async function botCourseList(ctx: MyContext) {
-    const { keyboard, isEmpty } = await createCoursesSelectionKeyboard();
-    if (isEmpty) {
-      await ctx.reply("Курсов нет");
-    } else {
-        await ctx.editMessageText("Список активных курсов. Нажми на курс чтобы удалить его.");
-        await ctx.editMessageReplyMarkup({ reply_markup: keyboard });
-    }
-    
+  const { keyboard, isEmpty } = await createCoursesSelectionKeyboard();
+  if (isEmpty) {
+    await ctx.reply("Курсов нет");
+  } else {
+    await ctx.editMessageText(
+      "Список активных курсов. Нажми на курс чтобы удалить его.",
+    );
+    await ctx.editMessageReplyMarkup({ reply_markup: keyboard });
+  }
 }
 
 export async function botChoseCourse(ctx: MyContext) {
-    const userId = ctx.from?.id;
-    const courseName = ctx.match?.[1];
+  const userId = ctx.from?.id;
+  const courseName = ctx.match?.[1];
 
-    if (userId === Number(VIID) || userId === Number(SVETLOVID)) {
-        if (courseName) {
-            await removeCourse(courseName);
-            await ctx.reply("Курс удалён!", {
-                reply_markup: courseKeyboard
-            });
-        }
-        return;
+  if (userId === Number(VIID) || userId === Number(SVETLOVID)) {
+    if (courseName) {
+      await removeCourse(courseName);
+      await ctx.reply("Курс удалён!", {
+        reply_markup: courseKeyboard,
+      });
     }
-    
-    if (userId && courseName) {
-        const course = await getCourseByName(courseName);
-        if (course) {
-            await updateTemporaryUser(userId, "courses", [course]);
-        }
-    }
+    return;
+  }
 
-    ctx.session.stage = "paymentProcess";
-    await ctx.reply(
-      "Пожалуйста, отправьте фото с квитанцией оплаты \n" +
+  if (userId && courseName) {
+    const course = await getCourseByName(courseName);
+    if (course) {
+      await updateTemporaryUser(userId, "courses", [course]);
+    }
+  }
+
+  ctx.session.stage = "paymentProcess";
+  await ctx.reply(
+    "Пожалуйста, отправьте фото с квитанцией оплаты \n" +
       "Варианты оплаты: \n" +
       `Номер карты Тинькофф:
        5536 9138 2905 0125
        Держатель: Виктория Алексеевна Маяковская \n` +
       "Для зарубежных карт: \n" +
-      "https://revolut.me/ivan1fhj3"
-    );
+      "https://revolut.me/ivan1fhj3",
+  );
 }

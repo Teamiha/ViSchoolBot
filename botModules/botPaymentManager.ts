@@ -4,12 +4,8 @@ import {
 } from "../botStatic/keyboard.ts";
 import { MyContext } from "../bot.ts";
 import { InlineKeyboard } from "@grammyjs/bot";
-import {
-  addActiveStudent,
-  removePaymentConfirmationRequest,
-  updateUser,
-} from "../db.ts";
-
+import { addActiveStudent, updateUser } from "../DB/mainDB.ts";
+import { removePaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
 export async function botCheckPayments(ctx: MyContext) {
   const { keyboard, isEmpty } = await createPaymentConfirmationKeyboard();
 

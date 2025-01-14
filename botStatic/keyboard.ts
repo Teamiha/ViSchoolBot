@@ -1,7 +1,7 @@
 import { InlineKeyboard } from "@grammyjs/bot";
 import { getKv } from "./kvClient.ts";
-import { UserData } from "../db.ts";
-import { getCourseNames } from "../db.ts";
+import { UserData } from "../DB/mainDB.ts";
+import { getCourseNames } from "../DB/courseManagerDB.ts";
 import { MyContext } from "../bot.ts";
 import { getRandomCompliment } from "./compliment.ts";
 
@@ -35,8 +35,6 @@ export const courseKeyboard = new InlineKeyboard()
   .row()
   .text("Назад", "backToAdminMain");
 
-
-  
 export async function createPaymentConfirmationKeyboard(): Promise<{
   keyboard: InlineKeyboard;
   isEmpty: boolean;
@@ -88,8 +86,7 @@ export async function createCoursesSelectionKeyboard(): Promise<{
   return { keyboard: keyboard, isEmpty: false };
 }
 
-export async function backToAdminMain(ctx: MyContext){
-    await ctx.editMessageText(`Привет! Помни что ${getRandomCompliment()}`);
-    await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
+export async function backToAdminMain(ctx: MyContext) {
+  await ctx.editMessageText(`Привет! Помни что ${getRandomCompliment()}`);
+  await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
 }
-

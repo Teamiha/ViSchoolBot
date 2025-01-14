@@ -1,6 +1,8 @@
-import { createTemporaryUser, updateTemporaryUser, getCourseByName, removeCourse } from "../db.ts";
+import {
+  createTemporaryUser,
+  updateTemporaryUser,
+} from "../DB/temporaryUserDB.ts";
 import { MyContext } from "../bot.ts";
-import { VIID, SVETLOVID } from "../config.ts";
 
 export async function botRegistration(ctx: MyContext) {
   if (ctx.from?.id) {
@@ -19,6 +21,3 @@ export async function botRegistration(ctx: MyContext) {
       "Напишите имя учащегося:",
   );
 }
-
-
-

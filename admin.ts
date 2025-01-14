@@ -1,5 +1,5 @@
 import { getKv } from "./botStatic/kvClient.ts";
-import { UserData } from "./db.ts";
+import { UserData } from "./DB/mainDB.ts";
 
 export async function listAllViBotRecords() {
   const kv = await getKv();
