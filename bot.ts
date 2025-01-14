@@ -18,7 +18,7 @@ import {
   botCourseList,
   botCourseManager,
 } from "./botModules/botCoursesManager.ts";
-import { botCheckHomework } from "./botModules/botHomeWork.ts";
+import { botCheckHomework, botSelectHomework } from "./botModules/botHomeWork.ts";
 
 export interface SessionData {
   stage:
@@ -106,6 +106,11 @@ bot.callbackQuery(/^final_confirm_payment:(\d+)$/, async (ctx) => {
 bot.callbackQuery(/^select_course:(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   await botChoseCourse(ctx);
+});
+
+bot.callbackQuery(/^select_homework:(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botSelectHomework(ctx);
 });
 
 bot.callbackQuery("cancel_confirmation", async (ctx) => {

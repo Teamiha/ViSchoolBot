@@ -6,6 +6,11 @@ import { MyContext } from "../bot.ts";
 import { getRandomCompliment } from "./compliment.ts";
 import { getUncheckedHomeworks } from "../DB/homeworkManagerDB.ts";
 
+export async function backToAdminMain(ctx: MyContext) {
+    await ctx.editMessageText(`Привет! Помни что ${getRandomCompliment()}`);
+    await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
+  }
+
 export const registrationKeyboard = new InlineKeyboard()
   .text("Регистрация", "startRegistration")
   .row()
@@ -87,10 +92,7 @@ export async function createCoursesSelectionKeyboard(): Promise<{
   return { keyboard: keyboard, isEmpty: false };
 }
 
-export async function backToAdminMain(ctx: MyContext) {
-  await ctx.editMessageText(`Привет! Помни что ${getRandomCompliment()}`);
-  await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
-}
+
 
 export async function createHomeworkCheckKeyboard(): Promise<{
   keyboard: InlineKeyboard;
@@ -110,7 +112,7 @@ export async function createHomeworkCheckKeyboard(): Promise<{
     if (userData.value) {
       const studentName = userData.value.name || "Неизвестный ученик";
       const buttonText = `${studentName} | ${homework.courseName}`;
-      keyboard.text(buttonText, `check_homework:${homework.studentId}:${homework.courseName}`).row();
+      keyboard.text(buttonText, `select_homework:${homework.studentId}:${homework.courseName}`).row();
     }
   }
 
@@ -119,3 +121,10 @@ export async function createHomeworkCheckKeyboard(): Promise<{
   return { keyboard: keyboard, isEmpty: false };
 }
 
+export const homeworkResponseKeyboard = (studentId: string, courseName: string) => 
+    new InlineKeyboard()
+        .text("Принять", `accept_homework:${studentId}:${courseName}`)
+        .row()
+        .text("На доработку", `revise_homework:${studentId}:${courseName}`)
+        .row()
+        .text("Назад", "backToAdminMain");
