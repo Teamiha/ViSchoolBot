@@ -28,6 +28,7 @@ export interface SessionData {
     | "addCourse"
     | "askNotes"
     | "sendHomework"
+    | "commentToHomework"
     | "askQuestion"
     | "makeNotes";
 }
