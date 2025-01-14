@@ -1,5 +1,6 @@
 import { getKv } from "./botStatic/kvClient.ts";
 import { UserData } from "./DB/mainDB.ts";
+import { HomeworkSubmission } from "./DB/homeworkManagerDB.ts";
 
 export async function listAllViBotRecords() {
   const kv = await getKv();
@@ -69,8 +70,35 @@ async function addMockUsersToPaymentConfirmationRequests() {
   console.log("Added mock users to payment confirmation requests");
 }
 
-// createMockUsers();
-listAllViBotRecords();
+async function createMockHomeworks() {
+  const kv = await getKv();
+  const courses = ["Математика", "Физика", "Информатика", "Английский"];
+  
+  for (let i = 1; i <= 10; i++) {
+    const submission: HomeworkSubmission = {
+      studentId: i,  // Соответствует ID из createMockUsers
+      messageId: Math.floor(Math.random() * 1000000),  // Случайный message_id
+      chatId: Math.floor(Math.random() * 1000000),     // Случайный chat_id
+      courseName: courses[Math.floor(Math.random() * courses.length)],
+      submittedAt: Date.now(),
+      isChecked: false,
+      history: []
+    };
 
+    await kv.set(
+      ["ViBot", "homework", `${submission.studentId}:${submission.courseName}`], 
+      submission
+    );
+    
+    console.log(`Created homework for student ${i} in ${submission.courseName}`);
+  }
+  
+  console.log("\nCreated 10 mock homework submissions");
+}
+
+// Раскомментируйте нужную функцию для выполнения
+// createMockUsers();
+// createMockHomeworks();
+// listAllViBotRecords();
 // deleteAllViBotRecords();
 // addMockUsersToPaymentConfirmationRequests();

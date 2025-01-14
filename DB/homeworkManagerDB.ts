@@ -1,5 +1,18 @@
 import { getKv } from "../botStatic/kvClient.ts";
-import { HomeworkSubmission } from "./mainDB.ts";
+
+
+export interface HomeworkSubmission {
+    studentId: number;
+    messageId: number;
+    chatId: number;
+    courseName: string;
+    submittedAt: number;
+    isChecked: boolean;
+    history: {
+      homeworkMessageId: number;
+      teacherCommentMessageId: number;
+    }[];
+  }
 
 export async function submitHomework(
   studentId: number,

@@ -17,19 +17,8 @@ export interface Course {
   link: string;
 }
 
-// Homework interfaces
-export interface HomeworkSubmission {
-  studentId: number;
-  messageId: number;
-  chatId: number;
-  courseName: string;
-  submittedAt: number;
-  isChecked: boolean;
-  history: {
-    homeworkMessageId: number;
-    teacherCommentMessageId: number;
-  }[];
-}
+
+
 
 export async function createNewUser(userId: number) {
   const kv = await getKv();

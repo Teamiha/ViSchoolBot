@@ -4,6 +4,7 @@ import { UserData } from "../DB/mainDB.ts";
 import { getCourseNames } from "../DB/courseManagerDB.ts";
 import { MyContext } from "../bot.ts";
 import { getRandomCompliment } from "./compliment.ts";
+import { getUncheckedHomeworks } from "../DB/homeworkManagerDB.ts";
 
 export const registrationKeyboard = new InlineKeyboard()
   .text("Регистрация", "startRegistration")
@@ -90,3 +91,31 @@ export async function backToAdminMain(ctx: MyContext) {
   await ctx.editMessageText(`Привет! Помни что ${getRandomCompliment()}`);
   await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
 }
+
+export async function createHomeworkCheckKeyboard(): Promise<{
+  keyboard: InlineKeyboard;
+  isEmpty: boolean;
+}> {
+  const kv = await getKv();
+  const homeworks = await getUncheckedHomeworks();
+  
+  const keyboard = new InlineKeyboard();
+
+  if (homeworks.length === 0) {
+    return { keyboard: keyboard, isEmpty: true };
+  }
+
+  for (const homework of homeworks) {
+    const userData = await kv.get<UserData>(["ViBot", "userId:", homework.studentId]);
+    if (userData.value) {
+      const studentName = userData.value.name || "Неизвестный ученик";
+      const buttonText = `${studentName} | ${homework.courseName}`;
+      keyboard.text(buttonText, `check_homework:${homework.studentId}:${homework.courseName}`).row();
+    }
+  }
+
+  keyboard.text("Назад", "backToAdminMain").row();
+
+  return { keyboard: keyboard, isEmpty: false };
+}
+

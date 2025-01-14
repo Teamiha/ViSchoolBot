@@ -8,6 +8,8 @@ import {
   updateTemporaryUser,
 } from "../DB/temporaryUserDB.ts";
 import { addPaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
+import { submitHomework } from "../DB/homeworkManagerDB.ts";
+
 export async function botTextProcessing(ctx: MyContext) {
   if (!ctx.message?.text) return;
   if (!ctx.from?.id) return;
@@ -87,5 +89,38 @@ export async function botPhotoProcessing(ctx: MyContext) {
     await ctx.reply(
       "Спасибо! После подтверждения оплаты, вам прийдет сообщение о завершении регистрации.",
     );
+
+  } else if (ctx.session.stage === "sendHomework") {
+    ctx.session.stage = "null";
+
+    const studentId = ctx.from.id;
+    const messageId = ctx.message.message_id;
+    const chatId = ctx.chat.id;
+    
+    // Получаем данные пользователя
+    const userData = await getUser(studentId);
+    const userNickname = userData.value?.nickName || "Нет username";
+    const userName = userData.value?.name || "Нет имени";
+
+    if (!userData.value?.courses) {
+      await ctx.reply("Ошибка: у вас нет активного курса");
+      ctx.session.stage = "null";
+      return;
+    }
+
+    await submitHomework(
+      studentId,
+      messageId,
+      chatId,
+      userData.value.courses[0].name
+    );
+
+    await ctx.reply("Спасибо! Как только учитель проверит вашу работу, вы получите уведомление.");
+
+    await ctx.api.sendMessage(
+        SVETLOVID,
+        `Учащийся (ID: ${studentId}, @${userNickname}, ${userName}) отправил домашнее задание.\n` +
+          `Проверить его работу можно в разделе "Проверить домашние задания".`,
+      );
   }
 }
