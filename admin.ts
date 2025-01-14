@@ -73,26 +73,28 @@ async function addMockUsersToPaymentConfirmationRequests() {
 async function createMockHomeworks() {
   const kv = await getKv();
   const courses = ["Математика", "Физика", "Информатика", "Английский"];
-  
+
   for (let i = 1; i <= 10; i++) {
     const submission: HomeworkSubmission = {
-      studentId: i,  // Соответствует ID из createMockUsers
-      messageId: Math.floor(Math.random() * 1000000),  // Случайный message_id
-      chatId: Math.floor(Math.random() * 1000000),     // Случайный chat_id
+      studentId: i, // Соответствует ID из createMockUsers
+      messageId: Math.floor(Math.random() * 1000000), // Случайный message_id
+      chatId: Math.floor(Math.random() * 1000000), // Случайный chat_id
       courseName: courses[Math.floor(Math.random() * courses.length)],
       submittedAt: Date.now(),
       isChecked: false,
-      history: []
+      history: [],
     };
 
     await kv.set(
-      ["ViBot", "homework", `${submission.studentId}:${submission.courseName}`], 
-      submission
+      ["ViBot", "homework", `${submission.studentId}:${submission.courseName}`],
+      submission,
     );
-    
-    console.log(`Created homework for student ${i} in ${submission.courseName}`);
+
+    console.log(
+      `Created homework for student ${i} in ${submission.courseName}`,
+    );
   }
-  
+
   console.log("\nCreated 10 mock homework submissions");
 }
 

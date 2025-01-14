@@ -1,18 +1,17 @@
 import { getKv } from "../botStatic/kvClient.ts";
 
-
 export interface HomeworkSubmission {
-    studentId: number;
-    messageId: number;
-    chatId: number;
-    courseName: string;
-    submittedAt: number;
-    isChecked: boolean;
-    history: {
-      homeworkMessageId: number;
-      teacherCommentMessageId: number;
-    }[];
-  }
+  studentId: number;
+  messageId: number;
+  chatId: number;
+  courseName: string;
+  submittedAt: number;
+  isChecked: boolean;
+  history: {
+    homeworkMessageId: number;
+    teacherCommentMessageId: number;
+  }[];
+}
 
 export async function submitHomework(
   studentId: number,
@@ -94,13 +93,15 @@ export async function getHomeworkSubmission(
   return result.value || null;
 }
 
-export async function markHomeworkAsChecked(homeworkKey: string) {
+export async function changeHomeworkCheckStatus(
+  homeworkKey: string,
+  status: boolean,
+) {
   const kv = await getKv();
 
-  // Обновляем статус домашнего задания
   const homework = await getHomeworkSubmission(homeworkKey);
   if (homework) {
-    homework.isChecked = true;
+    homework.isChecked = status;
     await kv.set(["ViBot", "homework", homeworkKey], homework);
   }
 }

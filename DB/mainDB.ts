@@ -17,9 +17,6 @@ export interface Course {
   link: string;
 }
 
-
-
-
 export async function createNewUser(userId: number) {
   const kv = await getKv();
 

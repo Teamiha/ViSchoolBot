@@ -7,9 +7,9 @@ import { getRandomCompliment } from "./compliment.ts";
 import { getUncheckedHomeworks } from "../DB/homeworkManagerDB.ts";
 
 export async function backToAdminMain(ctx: MyContext) {
-    await ctx.editMessageText(`Привет! Помни что ${getRandomCompliment()}`);
-    await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
-  }
+  await ctx.editMessageText(`Привет! Помни что ${getRandomCompliment()}`);
+  await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
+}
 
 export const registrationKeyboard = new InlineKeyboard()
   .text("Регистрация", "startRegistration")
@@ -92,15 +92,13 @@ export async function createCoursesSelectionKeyboard(): Promise<{
   return { keyboard: keyboard, isEmpty: false };
 }
 
-
-
 export async function createHomeworkCheckKeyboard(): Promise<{
   keyboard: InlineKeyboard;
   isEmpty: boolean;
 }> {
   const kv = await getKv();
   const homeworks = await getUncheckedHomeworks();
-  
+
   const keyboard = new InlineKeyboard();
 
   if (homeworks.length === 0) {
@@ -108,11 +106,18 @@ export async function createHomeworkCheckKeyboard(): Promise<{
   }
 
   for (const homework of homeworks) {
-    const userData = await kv.get<UserData>(["ViBot", "userId:", homework.studentId]);
+    const userData = await kv.get<UserData>([
+      "ViBot",
+      "userId:",
+      homework.studentId,
+    ]);
     if (userData.value) {
       const studentName = userData.value.name || "Неизвестный ученик";
       const buttonText = `${studentName} | ${homework.courseName}`;
-      keyboard.text(buttonText, `select_homework:${homework.studentId}:${homework.courseName}`).row();
+      keyboard.text(
+        buttonText,
+        `select_homework:${homework.studentId}:${homework.courseName}`,
+      ).row();
     }
   }
 
@@ -121,10 +126,13 @@ export async function createHomeworkCheckKeyboard(): Promise<{
   return { keyboard: keyboard, isEmpty: false };
 }
 
-export const homeworkResponseKeyboard = (studentId: string, courseName: string) => 
-    new InlineKeyboard()
-        .text("Принять", `accept_homework:${studentId}:${courseName}`)
-        .row()
-        .text("На доработку", `revise_homework:${studentId}:${courseName}`)
-        .row()
-        .text("Назад", "backToAdminMain");
+export const homeworkResponseKeyboard = (
+  studentId: string,
+  courseName: string,
+) =>
+  new InlineKeyboard()
+    .text("Принять", `accept_homework:${studentId}:${courseName}`)
+    .row()
+    .text("На доработку", `revise_homework:${studentId}:${courseName}`)
+    .row()
+    .text("Назад", "backToAdminMain");
