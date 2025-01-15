@@ -44,6 +44,7 @@ export async function botAddCourseExecute(ctx: MyContext) {
   await ctx.reply("Курс добавлен!", {
     reply_markup: courseKeyboard,
   });
+  console.log("Added course", courseName, courseLink);
 }
 
 export async function botCourseList(ctx: MyContext) {
@@ -68,6 +69,7 @@ export async function botChoseCourse(ctx: MyContext) {
       await ctx.reply("Курс удалён!", {
         reply_markup: courseKeyboard,
       });
+      console.log("Removed course", courseName);
     }
     return;
   }

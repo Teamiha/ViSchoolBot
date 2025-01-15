@@ -6,6 +6,7 @@ import { MyContext } from "../bot.ts";
 import { InlineKeyboard } from "@grammyjs/bot";
 import { addActiveStudent, updateUser } from "../DB/mainDB.ts";
 import { removePaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
+
 export async function botCheckPayments(ctx: MyContext) {
   const { keyboard, isEmpty } = await createPaymentConfirmationKeyboard();
 
@@ -45,6 +46,8 @@ export async function botFinalConfirmPayment(ctx: MyContext) {
     await removePaymentConfirmationRequest(userId);
     await addActiveStudent(userId);
 
+    console.log("Payment confirmed for user", userId);
+
     await ctx.reply("Оплата подтверждена!", { reply_markup: adminKeyboard });
 
     await ctx.api.sendMessage(
@@ -53,3 +56,4 @@ export async function botFinalConfirmPayment(ctx: MyContext) {
     );
   }
 }
+

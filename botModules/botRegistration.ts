@@ -8,6 +8,7 @@ export async function botRegistration(ctx: MyContext) {
   if (ctx.from?.id) {
     await createTemporaryUser(ctx.from?.id);
   }
+  console.log("Temporary user created for user", ctx.from?.id);
 
   if (ctx.from?.username) {
     await updateTemporaryUser(ctx.from?.id, "nickName", ctx.from?.username);

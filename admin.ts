@@ -101,6 +101,6 @@ async function createMockHomeworks() {
 // Раскомментируйте нужную функцию для выполнения
 // createMockUsers();
 // createMockHomeworks();
-// listAllViBotRecords();
+listAllViBotRecords();
 // deleteAllViBotRecords();
 // addMockUsersToPaymentConfirmationRequests();

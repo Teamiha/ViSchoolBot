@@ -67,6 +67,9 @@ export async function botPhotoProcessing(ctx: MyContext) {
 
     ctx.session.stage = "null";
     await confirmRegistration(ctx.from?.id);
+
+    console.log("Registration confirmed for user", userId);
+    
     await addPaymentConfirmationRequest(ctx.from?.id);
     await updateUser(ctx.from?.id, "paymentInProcess", true);
 
@@ -92,6 +95,9 @@ export async function botPhotoProcessing(ctx: MyContext) {
     await ctx.reply(
       "Спасибо! После подтверждения оплаты, вам прийдет сообщение о завершении регистрации.",
     );
+
+    console.log("Payment in process for user", userId);
+
   } else if (ctx.session.stage === "sendHomework") {
     ctx.session.stage = "null";
 
@@ -116,6 +122,8 @@ export async function botPhotoProcessing(ctx: MyContext) {
       chatId,
       userData.value.courses[0].name,
     );
+
+    console.log("Homework submitted for user", studentId);
 
     await ctx.reply(
       "Спасибо! Как только учитель проверит вашу работу, вы получите уведомление.",

@@ -29,26 +29,28 @@ export async function botStudentSendHomework(ctx: MyContext) {
   );
 }
 
+export async function botStudentSendHomeworkExecute(ctx: MyContext) {
+
+}
+
 export async function botSelectHomework(ctx: MyContext) {
-  // Получаем studentId и courseName из callback data
   const [studentId, courseName] = ctx.match?.[1].split(":") || [];
   if (!studentId || !courseName) return;
 
-  // Получаем данные о домашней работе
   const homework = await getHomeworkSubmission(`${studentId}:${courseName}`);
   if (!homework) {
     await ctx.reply("Ошибка: домашняя работа не найдена");
+    console.log("Homework not found for user", studentId);
     return;
   }
 
-  // Получаем данные об ученике
   const userData = await getUser(Number(studentId));
   if (!userData.value) {
     await ctx.reply("Ошибка: данные ученика не найдены");
+    console.log("User data not found for user", studentId);
     return;
   }
 
-  // Пересылаем сообщение с домашней работой
   const teacherId = Number(SVETLOVID); // или можно использовать SVETLOVID
   await ctx.api.forwardMessage(
     teacherId,
@@ -59,16 +61,13 @@ export async function botSelectHomework(ctx: MyContext) {
   if (homework.history && homework.history.length > 0) {
     await ctx.reply("История предыдущих версий:");
 
-    // Отправляем каждую версию из истории
     for (const entry of homework.history) {
-      // Отправляем фото домашней работы
       await ctx.api.forwardMessage(
         teacherId,
         homework.chatId,
         entry.homeworkMessageId,
       );
 
-      // Если есть комментарий учителя, отправляем его
       if (entry.teacherCommentMessageId) {
         await ctx.api.forwardMessage(
           teacherId,
@@ -79,7 +78,6 @@ export async function botSelectHomework(ctx: MyContext) {
     }
   }
 
-  // Отправляем информацию об ученике и клавиатуру для ответа
   const studentInfo = `Информация об ученике:
 Имя: ${userData.value.name}
 Курс: ${courseName}
@@ -97,16 +95,14 @@ export async function botAcceptHomework(ctx: MyContext) {
   const [studentId, courseName] = ctx.match?.[1].split(":") || [];
   if (!studentId || !courseName) return;
 
-  // Удаляем домашку из базы
   await deleteHomework(Number(studentId), courseName);
+  console.log("Homework deleted for user", studentId);
 
-  // Отправляем уведомление ученику
   await ctx.api.sendMessage(
     Number(studentId),
     `✅ Ваша домашняя работа по курсу "${courseName}" принята!`,
   );
 
-  // Показываем обновленный список домашних работ
   await botCheckHomework(ctx);
 }
 
