@@ -7,6 +7,7 @@ import {
   botCheckPayments,
   botConfirmPayment,
   botFinalConfirmPayment,
+  botCancelConfirmation,
 } from "./botModules/botPaymentManager.ts";
 import {
   botPhotoProcessing,
@@ -22,6 +23,8 @@ import {
   botCheckHomework,
   botReviseHomework,
   botSelectHomework,
+  botStudentSendHomework,
+  botAcceptHomework,
 } from "./botModules/botHomeWork.ts";
 
 export interface SessionData {
@@ -100,9 +103,24 @@ bot.callbackQuery("checkHomework", async (ctx) => {
   await botCheckHomework(ctx);
 });
 
+bot.callbackQuery("sendHomework", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botStudentSendHomework(ctx);
+});
+
+bot.callbackQuery(/^accept_homework:(\d+):(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botAcceptHomework(ctx);
+});
+
 bot.callbackQuery(/^confirm_payment:(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   await botConfirmPayment(ctx);
+});
+
+bot.callbackQuery(/^cancel_confirmation:(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botCancelConfirmation(ctx);
 });
 
 bot.callbackQuery(/^final_confirm_payment:(\d+)$/, async (ctx) => {

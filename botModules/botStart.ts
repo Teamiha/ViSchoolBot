@@ -1,5 +1,8 @@
 import { MyContext } from "../bot.ts";
-import { getUserPaymentInProcess, isActiveStudent } from "../DB/mainDB.ts";
+import {
+  getUserPaymentInProcess,
+  isActiveStudent,
+} from "../DB/mainDB.ts";
 import {
   adminKeyboard,
   registrationKeyboard,
@@ -7,10 +10,7 @@ import {
 } from "../botStatic/keyboard.ts";
 import { SVETLOVID, VIID } from "../config.ts";
 import { getRandomCompliment } from "../botStatic/compliment.ts";
-import {
-  deleteTemporaryUser,
-  hasTemporaryRegistration,
-} from "../DB/temporaryUserDB.ts";
+import { hasTemporaryRegistration, deleteTemporaryUser } from "../DB/temporaryUserDB.ts";
 
 export async function botStart(ctx: MyContext) {
   const userId = ctx.from?.id;

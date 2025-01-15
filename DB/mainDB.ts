@@ -92,6 +92,11 @@ export async function getUserPaymentInProcess(userId: number) {
   }
 }
 
+export async function deleteUser(userId: number) {
+  const kv = await getKv();
+  await kv.delete(["ViBot", "userId:", userId]);
+}
+
 // Student status management
 
 export async function addActiveStudent(userId: number) {

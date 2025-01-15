@@ -7,13 +7,17 @@ import {
   getStudentHomework,
 } from "../DB/homeworkManagerDB.ts";
 import { getUser } from "../DB/mainDB.ts";
-import { homeworkResponseKeyboard } from "../botStatic/keyboard.ts";
+import { homeworkResponseKeyboard, backButton } from "../botStatic/keyboard.ts";
 import { SVETLOVID } from "../config.ts";
 import { submitHomework } from "../DB/homeworkManagerDB.ts";
+
+
 export async function botCheckHomework(ctx: MyContext) {
   const { keyboard, isEmpty } = await createHomeworkCheckKeyboard();
   if (isEmpty) {
-    await ctx.reply("Нет непроверенных домашних заданий");
+    await ctx.reply("Нет непроверенных домашних заданий", {
+      reply_markup: backButton,
+    });
   } else {
     await ctx.reply("Выберите домашнее задание для проверки", {
       reply_markup: keyboard,
@@ -128,7 +132,9 @@ export async function botSelectHomework(ctx: MyContext) {
 export async function botAcceptHomework(ctx: MyContext) {
   await ctx.answerCallbackQuery();
 
-  const [studentId, courseName] = ctx.match?.[1].split(":") || [];
+  const studentId = ctx.match?.[1];
+  const courseName = ctx.match?.[2];
+  
   if (!studentId || !courseName) return;
 
   await deleteHomework(Number(studentId), courseName);

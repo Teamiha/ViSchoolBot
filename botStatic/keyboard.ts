@@ -11,6 +11,9 @@ export async function backToAdminMain(ctx: MyContext) {
   await ctx.editMessageReplyMarkup({ reply_markup: adminKeyboard });
 }
 
+export const backButton = new InlineKeyboard()
+  .text("Назад", "backToAdminMain");
+
 export const registrationKeyboard = new InlineKeyboard()
   .text("Регистрация", "startRegistration")
   .row()

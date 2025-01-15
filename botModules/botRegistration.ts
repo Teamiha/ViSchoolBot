@@ -5,7 +5,7 @@ import {
 } from "../DB/temporaryUserDB.ts";
 import { MyContext } from "../bot.ts";
 import { getUser, updateUser } from "../DB/mainDB.ts";
-import { SVETLOVID } from "../config.ts";
+import { ADMIN_ID } from "../config.ts";
 import { addPaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
 
 export async function botRegistration(ctx: MyContext) {
@@ -49,14 +49,14 @@ export async function botRegistrationExecute(ctx: MyContext) {
 
   // Пересылаем фото администратору
   await ctx.api.forwardMessage(
-    SVETLOVID,
+    ADMIN_ID,
     ctx.chat.id,
     ctx.message.message_id,
   );
 
   // Отправляем сообщение администратору
   await ctx.api.sendMessage(
-    SVETLOVID,
+    ADMIN_ID,
     `Ура! От пользователя (ID: ${userId}, @${userNickname}, ${userName}) пришла оплата.\n` +
       `Как проверишь, подтверди её факт в администраторском разделе "Подтвердить оплату".`,
   );

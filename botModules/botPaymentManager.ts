@@ -4,7 +4,7 @@ import {
 } from "../botStatic/keyboard.ts";
 import { MyContext } from "../bot.ts";
 import { InlineKeyboard } from "@grammyjs/bot";
-import { addActiveStudent, updateUser } from "../DB/mainDB.ts";
+import { addActiveStudent, updateUser, deleteUser } from "../DB/mainDB.ts";
 import { removePaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
 
 export async function botCheckPayments(ctx: MyContext) {
@@ -31,7 +31,7 @@ export async function botConfirmPayment(ctx: MyContext) {
       {
         reply_markup: new InlineKeyboard()
           .text("Да", `final_confirm_payment:${userId}`)
-          .text("Нет", "cancel_confirmation"),
+          .text("Нет", `cancel_confirmation:${userId}`),
       },
     );
   }
@@ -53,6 +53,18 @@ export async function botFinalConfirmPayment(ctx: MyContext) {
     await ctx.api.sendMessage(
       userId,
       "Ваша оплата была подтверждена! Нажмите /start чтобы попасть в меню учащегося",
+    );
+  }
+}
+
+export async function botCancelConfirmation(ctx: MyContext) {
+  if (ctx.match) {
+    const userId = Number(ctx.match[1]);
+    await removePaymentConfirmationRequest(userId);
+    await deleteUser(userId);
+    await ctx.reply(
+      "Оплата отклонена, пользователь удалён",
+      { reply_markup: adminKeyboard },
     );
   }
 }
