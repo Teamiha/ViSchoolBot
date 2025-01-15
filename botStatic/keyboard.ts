@@ -71,7 +71,7 @@ export async function createPaymentConfirmationKeyboard(): Promise<{
   return { keyboard: keyboard, isEmpty: false };
 }
 
-export async function createCoursesSelectionKeyboard(): Promise<{
+export async function createCoursesSelectionKeyboard(isAdmin: boolean = false): Promise<{
   keyboard: InlineKeyboard;
   isEmpty: boolean;
 }> {
@@ -87,7 +87,9 @@ export async function createCoursesSelectionKeyboard(): Promise<{
     keyboard.text(course, `select_course:${course}`).row();
   }
 
-  keyboard.text("Назад", "backToAdminMain").row();
+  if (isAdmin) {
+    keyboard.text("Назад", "backToAdminMain").row();
+  }
 
   return { keyboard: keyboard, isEmpty: false };
 }

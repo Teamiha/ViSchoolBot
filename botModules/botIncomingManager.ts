@@ -37,7 +37,7 @@ export async function botTextProcessing(ctx: MyContext) {
     const messageText = ctx.message.text;
     await updateTemporaryUser(ctx.from?.id, "class", messageText);
     ctx.session.stage = "askCourses";
-    const { keyboard, isEmpty } = await createCoursesSelectionKeyboard();
+    const { keyboard, isEmpty } = await createCoursesSelectionKeyboard(false);
     if (isEmpty) {
       await ctx.reply("Курсов нет, напишите администратору");
     } else {

@@ -48,7 +48,7 @@ export async function botAddCourseExecute(ctx: MyContext) {
 }
 
 export async function botCourseList(ctx: MyContext) {
-  const { keyboard, isEmpty } = await createCoursesSelectionKeyboard();
+  const { keyboard, isEmpty } = await createCoursesSelectionKeyboard(true);
   if (isEmpty) {
     await ctx.reply("Курсов нет");
   } else {
