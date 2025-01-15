@@ -9,7 +9,7 @@ import {
 import { getUser } from "../DB/mainDB.ts";
 import { homeworkResponseKeyboard } from "../botStatic/keyboard.ts";
 import { SVETLOVID } from "../config.ts";
-
+import { submitHomework } from "../DB/homeworkManagerDB.ts";
 export async function botCheckHomework(ctx: MyContext) {
   const { keyboard, isEmpty } = await createHomeworkCheckKeyboard();
   if (isEmpty) {
@@ -30,7 +30,43 @@ export async function botStudentSendHomework(ctx: MyContext) {
 }
 
 export async function botStudentSendHomeworkExecute(ctx: MyContext) {
+  if (!ctx.from?.id) return;
+  if (!ctx.message?.photo) return;
+  if (!ctx.chat?.id) return;
 
+  const studentId = ctx.from.id;
+  const messageId = ctx.message.message_id;
+  const chatId = ctx.chat.id;
+
+  // Получаем данные пользователя
+  const userData = await getUser(studentId);
+  const userNickname = userData.value?.nickName || "Нет username";
+  const userName = userData.value?.name || "Нет имени";
+
+  if (!userData.value?.courses) {
+    await ctx.reply("Ошибка: у вас нет активного курса");
+    ctx.session.stage = "null";
+    return;
+  }
+
+  await submitHomework(
+    studentId,
+    messageId,
+    chatId,
+    userData.value.courses[0].name,
+  );
+
+  console.log("Homework submitted for user", studentId);
+
+  await ctx.reply(
+    "Спасибо! Как только учитель проверит вашу работу, вы получите уведомление.",
+  );
+
+  await ctx.api.sendMessage(
+    SVETLOVID,
+    `Учащийся (ID: ${studentId}, @${userNickname}, ${userName}) отправил домашнее задание.\n` +
+      `Проверить его работу можно в разделе "Проверить домашние задания".`,
+  );
 }
 
 export async function botSelectHomework(ctx: MyContext) {

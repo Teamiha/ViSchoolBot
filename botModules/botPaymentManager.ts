@@ -56,4 +56,3 @@ export async function botFinalConfirmPayment(ctx: MyContext) {
     );
   }
 }
-
