@@ -113,8 +113,8 @@ export async function setCoursePriceExecute(ctx: MyContext, price: string) {
 export async function getCoursePrice() {
   const kv = await getKv();
   const price = await kv.get(["ViBot", "coursePrice"]);
-  if (!price) {
-    return "Цена курса не установлена";
+  if (!price || !price.value) {
+    return price.value = "Цена курса не установлена";
   }
-  return price;
+  return price.value;
 }

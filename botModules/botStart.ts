@@ -20,7 +20,7 @@ export async function botStart(ctx: MyContext) {
     const userIsTemporary = await hasTemporaryRegistration(userId);
     const hasPaymentInProcess = await getUserPaymentInProcess(userId);
 
-    if (userId === Number(VIID) || userId === Number(SVETLOVID)) {
+    if (userId === Number(VIID)) {
       await ctx.reply(
         `Добро пожаловать Виктория! Помни что ${getRandomCompliment()}`,
         {

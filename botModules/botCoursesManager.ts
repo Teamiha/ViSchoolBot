@@ -73,7 +73,7 @@ export async function botChoseCourse(ctx: MyContext) {
   const userId = ctx.from?.id;
   const courseName = ctx.match?.[1];
 
-  if (userId === Number(VIID) || userId === Number(SVETLOVID)) {
+  if (userId === Number(VIID)) {
     if (courseName) {
       await removeCourse(courseName);
       await ctx.reply("Курс удалён!", {
