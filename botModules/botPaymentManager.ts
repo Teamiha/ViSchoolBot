@@ -4,7 +4,7 @@ import {
 } from "../botStatic/keyboard.ts";
 import { MyContext } from "../bot.ts";
 import { InlineKeyboard } from "@grammyjs/bot";
-import { addActiveStudent, updateUser, deleteUser } from "../DB/mainDB.ts";
+import { addActiveStudent, updateUser, deleteUser, getUser } from "../DB/mainDB.ts";
 import { removePaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
 
 export async function botCheckPayments(ctx: MyContext) {
@@ -46,14 +46,26 @@ export async function botFinalConfirmPayment(ctx: MyContext) {
     await removePaymentConfirmationRequest(userId);
     await addActiveStudent(userId);
 
+    const userData = await getUser(userId);
+    const userCourses = userData.value?.courses || [];
+
     console.log("Payment confirmed for user", userId);
 
     await ctx.reply("Оплата подтверждена!", { reply_markup: adminKeyboard });
 
-    await ctx.api.sendMessage(
-      userId,
-      "Ваша оплата была подтверждена! Нажмите /start чтобы попасть в меню учащегося",
-    );
+    // Формируем сообщение с ссылкой на курс
+    let message = "Ваша оплата была подтверждена!\n";
+    
+    if (userCourses.length > 0) {
+      message += "\nСсылка для присоединения к курсу:\n";
+      userCourses.forEach(course => {
+        message += `${course.name}: ${course.link}\n`;
+      });
+    }
+    
+    message += "\nНажмите /start чтобы попасть в меню учащегося";
+
+    await ctx.api.sendMessage(userId, message);
   }
 }
 
