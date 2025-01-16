@@ -3,14 +3,17 @@ import {
   addCourse,
   getCourseByName,
   removeCourse,
+  completeCourse,
 } from "../DB/courseManagerDB.ts";
 import {
   courseKeyboard,
   createCoursesSelectionKeyboard,
+  adminKeyboard,
 } from "../botStatic/keyboard.ts";
 import { SVETLOVID, VIID } from "../config.ts";
 import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
 import { getCoursePrice } from "./botPaymentManager.ts";
+
 export async function botCourseManager(ctx: MyContext) {
   await ctx.editMessageText("Управление курсами:");
   await ctx.editMessageReplyMarkup({ reply_markup: courseKeyboard });
@@ -92,5 +95,20 @@ export async function botChoseCourse(ctx: MyContext) {
        Держатель: Виктория Алексеевна Маяковская \n` +
       "Для зарубежных карт: \n" +
       "https://revolut.me/ivan1fhj3",
+  );
+}
+
+export async function botCompleteCourse(ctx: MyContext) {
+  const courseName = ctx.match?.[1];
+  if (!courseName) {
+    await ctx.reply("Ошибка! Напиши о ней Мише");
+    console.log("Error: No course name provided");
+    return;
+  }
+  await completeCourse(courseName);
+  await ctx.reply(
+    `Курс "${courseName}" завершен. \n` +
+    "Все студенты исключены из курса и переведены в историю.",
+    { reply_markup: adminKeyboard }
   );
 }

@@ -13,6 +13,7 @@ export async function createTemporaryUser(userId: number) {
     school: "",
     class: "",
     courses: [],
+    courseHistory: [],
     hwoRegistered: "",
     notes: "",
   };

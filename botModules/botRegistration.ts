@@ -67,3 +67,4 @@ export async function botRegistrationExecute(ctx: MyContext) {
 
   console.log("Payment in process for user", userId);
 }
+

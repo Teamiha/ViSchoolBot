@@ -1,7 +1,7 @@
 import { InlineKeyboard } from "@grammyjs/bot";
 import { getKv } from "./kvClient.ts";
 import { UserData } from "../DB/mainDB.ts";
-import { getCourseNames } from "../DB/courseManagerDB.ts";
+import { getCourseNames, getCourses } from "../DB/courseManagerDB.ts";
 import { MyContext } from "../bot.ts";
 import { getRandomCompliment } from "./compliment.ts";
 import { getUncheckedHomeworks } from "../DB/homeworkManagerDB.ts";
@@ -41,6 +41,8 @@ export const courseKeyboard = new InlineKeyboard()
   .text("Добавить курс", "addCourse")
   .row()
   .text("Список курсов/удаление", "listCourses")
+  .row()
+  .text("Завершить курс", "completeCourse")
   .row()
   .text("Установить цену на курсы", "setCoursePrice")
   .row()
@@ -143,3 +145,27 @@ export const homeworkResponseKeyboard = (
     .text("На доработку", `revise_homework:${studentId}:${courseName}`)
     .row()
     .text("Назад", "backToAdminMain");
+
+
+export async function createCourseCompletionKeyboard(): Promise<{
+  keyboard: InlineKeyboard;
+  isEmpty: boolean;
+}> {
+  const courses = await getCourses();
+  const keyboard = new InlineKeyboard();
+
+  if (courses.length === 0) {
+    return { keyboard: keyboard, isEmpty: true };
+  }
+
+  for (const course of courses) {
+    keyboard.text(
+        `Завершить курс: ${course.name}`,
+        `complete_course:${course.name}`
+      ).row();
+  }
+
+  keyboard.text("Назад", "backToAdminMain").row();
+
+  return { keyboard: keyboard, isEmpty: false };
+}

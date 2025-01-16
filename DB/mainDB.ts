@@ -8,6 +8,7 @@ export interface UserData {
   school: string;
   class: string;
   courses: Course[];
+  courseHistory: Course[];
   hwoRegistered: string;
   notes: string;
 }
@@ -28,6 +29,7 @@ export async function createNewUser(userId: number) {
     school: "",
     class: "",
     courses: [],
+    courseHistory: [],
     hwoRegistered: "",
     notes: "",
   };
