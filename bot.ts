@@ -1,4 +1,5 @@
 import { Bot, Context, session, SessionFlavor } from "@grammyjs/bot";
+import { limit } from "@grammyjs/ratelimiter";
 import { BOT_TOKEN } from "./config.ts";
 import { botStart } from "./botModules/botStart.ts";
 import { adminKeyboard, backToAdminMain } from "./botStatic/keyboard.ts";
@@ -61,6 +62,14 @@ if (!BOT_TOKEN) {
 }
 
 const bot = new Bot<MyContext>(BOT_TOKEN);
+
+bot.use(limit({
+    timeFrame: 3000,
+    limit: 1,
+    onLimitExceeded: async (ctx) => {
+      await ctx.reply("Пожалуйста, подождите немного перед следующим действием");
+    },
+  }));
 
 bot.use(session({
   initial: (): SessionData => ({
