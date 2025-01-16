@@ -47,7 +47,8 @@ export async function botTextProcessing(ctx: MyContext) {
     ctx.session.stage = "askCourses";
     const { keyboard, isEmpty } = await createCoursesSelectionKeyboard(false);
     if (isEmpty) {
-      await ctx.reply("Сейчас открытых курсов нет, следите за новостями в нашей группе.");
+      await ctx.reply("Сейчас открытых курсов нет, следите за новостями в нашей группе. \n" +
+      "https://t.me/math_pml");
     } else {
       await ctx.reply("Выберете курс для учащегося", {
         reply_markup: keyboard,

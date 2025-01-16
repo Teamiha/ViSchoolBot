@@ -9,6 +9,7 @@ import {
   courseKeyboard,
   createCoursesSelectionKeyboard,
   adminKeyboard,
+  createCourseCompletionKeyboard,
 } from "../botStatic/keyboard.ts";
 import { SVETLOVID, VIID } from "../config.ts";
 import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
@@ -105,6 +106,17 @@ export async function botChoseCourse(ctx: MyContext) {
 }
 
 export async function botCompleteCourse(ctx: MyContext) {
+  await ctx.reply("Выбери курс, который хочешь завершить");
+  const { keyboard, isEmpty } = await createCourseCompletionKeyboard();
+  if (isEmpty) {
+    await ctx.reply("Ошибка! Напиши о ней Мише");
+    console.log("Error botCompleteCourse: No course name provided");
+    return;
+  }
+  await ctx.editMessageReplyMarkup({ reply_markup: keyboard });
+}
+
+export async function botCompleteCourseExecute(ctx: MyContext) {
   const courseName = ctx.match?.[1];
   if (!courseName) {
     await ctx.reply("Ошибка! Напиши о ней Мише");
@@ -112,6 +124,7 @@ export async function botCompleteCourse(ctx: MyContext) {
     return;
   }
   await completeCourse(courseName);
+  await removeCourse(courseName);
   await ctx.reply(
     `Курс "${courseName}" завершен. \n` +
     "Все студенты исключены из курса и переведены в историю.",
