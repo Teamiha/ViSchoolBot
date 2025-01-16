@@ -3,12 +3,16 @@ import { limit } from "@grammyjs/ratelimiter";
 import { BOT_TOKEN } from "./config.ts";
 import { botStart } from "./botModules/botStart.ts";
 import { adminKeyboard, backToAdminMain } from "./botStatic/keyboard.ts";
-import { botRegistration } from "./botModules/botRegistration.ts";
 import {
+  botHandleUpdateField,
+  botRegistration,
+  botUpdateStudentData,
+} from "./botModules/botRegistration.ts";
+import {
+  botCancelConfirmation,
   botCheckPayments,
   botConfirmPayment,
   botFinalConfirmPayment,
-  botCancelConfirmation,
   setCoursePrice,
 } from "./botModules/botPaymentManager.ts";
 import {
@@ -18,18 +22,18 @@ import {
 import {
   botAddCourseStart,
   botChoseCourse,
+  botCompleteCourse,
+  botCompleteCourseExecute,
   botCourseList,
   botCourseManager,
-  botCompleteCourseExecute,
-  botCompleteCourse,
   botViewCoursesForExistingUser,
 } from "./botModules/botCoursesManager.ts";
 import {
+  botAcceptHomework,
   botCheckHomework,
   botReviseHomework,
   botSelectHomework,
   botStudentSendHomework,
-  botAcceptHomework,
 } from "./botModules/botHomeWork.ts";
 
 export interface SessionData {
@@ -45,6 +49,7 @@ export interface SessionData {
     | "addCourse"
     | "askNotes"
     | "sendHomework"
+    | "updateStudentData"
     | "commentToHomework"
     | "askQuestion"
     | "setCoursePrice"
@@ -53,6 +58,7 @@ export interface SessionData {
     studentId: string;
     courseName: string;
   };
+  updateField?: string;
 }
 
 export type MyContext = Context & SessionFlavor<SessionData>;
@@ -64,12 +70,12 @@ if (!BOT_TOKEN) {
 const bot = new Bot<MyContext>(BOT_TOKEN);
 
 bot.use(limit({
-    timeFrame: 3000,
-    limit: 1,
-    onLimitExceeded: async (ctx) => {
-      await ctx.reply("Пожалуйста, подождите немного перед следующим действием");
-    },
-  }));
+  timeFrame: 2000,
+  limit: 1,
+  onLimitExceeded: async (ctx) => {
+    await ctx.reply("Пожалуйста, подождите немного перед следующим действием");
+  },
+}));
 
 bot.use(session({
   initial: (): SessionData => ({
@@ -95,6 +101,16 @@ bot.callbackQuery("addCourse", async (ctx) => {
 bot.callbackQuery("checkPayments", async (ctx) => {
   await ctx.answerCallbackQuery();
   await botCheckPayments(ctx);
+});
+
+bot.callbackQuery("updateStudentData", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botUpdateStudentData(ctx);
+});
+
+bot.callbackQuery("backToStudent", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botStart(ctx);
 });
 
 bot.callbackQuery("manageCourses", async (ctx) => {
@@ -137,10 +153,15 @@ bot.callbackQuery("viewCourses", async (ctx) => {
   await botViewCoursesForExistingUser(ctx);
 });
 
+bot.callbackQuery(/^update:(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botHandleUpdateField(ctx);
+});
+
 bot.callbackQuery(/^complete_course:(.+)$/, async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await botCompleteCourseExecute(ctx);
-  });
+  await ctx.answerCallbackQuery();
+  await botCompleteCourseExecute(ctx);
+});
 
 bot.callbackQuery(/^accept_homework:(\d+):(.+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();

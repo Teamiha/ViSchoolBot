@@ -4,9 +4,11 @@ import {
   updateTemporaryUser,
 } from "../DB/temporaryUserDB.ts";
 import { MyContext } from "../bot.ts";
-import { getUser, updateUser } from "../DB/mainDB.ts";
+import { getUser, updateUser, UserData } from "../DB/mainDB.ts";
 import { ADMIN_ID } from "../config.ts";
 import { addPaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
+import { studentKeyboard, updateDataKeyboard } from "../botStatic/keyboard.ts";
+import { botStart } from "./botStart.ts";
 
 export async function botRegistration(ctx: MyContext) {
   if (ctx.from?.id) {
@@ -78,3 +80,39 @@ export async function botRegistrationExecute(ctx: MyContext) {
   console.log("Payment in process for user", userId);
 }
 
+export async function botUpdateStudentData(ctx: MyContext) {
+  await ctx.reply("Выберите, какие данные вы хотите обновить:", {
+    reply_markup: updateDataKeyboard,
+  });
+}
+
+const validFields = ["school", "class", "hwoRegistered"] as const;
+type ValidField = typeof validFields[number];
+
+export async function botHandleUpdateField(ctx: MyContext) {
+  const field = ctx.match?.[1] as ValidField;
+  if (!validFields.includes(field)) return;
+
+  ctx.session.updateField = field;
+  ctx.session.stage = "updateStudentData";
+  await ctx.reply("Напишите новое значение:");
+}
+
+export async function botUpdateDataExecute(ctx: MyContext) {
+  if (!ctx.message?.text || !ctx.from?.id || !ctx.session.updateField) {
+    return;
+  }
+
+  const userId = ctx.from.id;
+  const newValue = ctx.message.text;
+  const field = ctx.session.updateField;
+
+  await updateUser(userId, field as keyof UserData, newValue);
+  await ctx.reply("Данные успешно обновлены!");
+
+  console.log("User data updated for user", userId, field, newValue);
+
+  await botStart(ctx);
+
+  ctx.session.updateField = undefined;
+}

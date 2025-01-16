@@ -1,12 +1,15 @@
 import { MyContext } from "../bot.ts";
 import { createCoursesSelectionKeyboard } from "../botStatic/keyboard.ts";
-import { botAddCourseExecute} from "./botCoursesManager.ts";
+import { botAddCourseExecute } from "./botCoursesManager.ts";
 import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
 import {
   botReviseHomeworkExecute,
   botStudentSendHomeworkExecute,
 } from "./botHomeWork.ts";
-import { botRegistrationExecute } from "./botRegistration.ts";
+import {
+  botRegistrationExecute,
+  botUpdateDataExecute,
+} from "./botRegistration.ts";
 import { setCoursePriceExecute } from "./botPaymentManager.ts";
 
 export async function botTextProcessing(ctx: MyContext) {
@@ -29,8 +32,10 @@ export async function botTextProcessing(ctx: MyContext) {
     const messageText = ctx.message.text;
     await updateTemporaryUser(ctx.from?.id, "hwoRegistered", messageText);
     ctx.session.stage = "askBirthDate";
-    await ctx.reply("Напишите дату рождения учащегося в формате YYYY-MM-DD \n" +
-    "Например если дата рождения 31 февраля 2001 года, то напишите 2001-02-28");
+    await ctx.reply(
+      "Напишите дату рождения учащегося в формате YYYY-MM-DD \n" +
+        "Например если дата рождения 31 февраля 2001 года, то напишите 2001-02-28",
+    );
   } else if (ctx.session.stage === "askBirthDate") {
     const messageText = ctx.message.text;
     await updateTemporaryUser(ctx.from?.id, "birthday", messageText);
@@ -47,8 +52,10 @@ export async function botTextProcessing(ctx: MyContext) {
     ctx.session.stage = "askCourses";
     const { keyboard, isEmpty } = await createCoursesSelectionKeyboard(false);
     if (isEmpty) {
-      await ctx.reply("Сейчас открытых курсов нет, следите за новостями в нашей группе. \n" +
-      "https://t.me/math_pml");
+      await ctx.reply(
+        "Сейчас открытых курсов нет, следите за новостями в нашей группе. \n" +
+          "https://t.me/math_pml",
+      );
     } else {
       await ctx.reply("Выберете курс для учащегося", {
         reply_markup: keyboard,
@@ -62,6 +69,9 @@ export async function botTextProcessing(ctx: MyContext) {
     ctx.session.stage = "null";
   } else if (ctx.session.stage === "setCoursePrice") {
     await setCoursePriceExecute(ctx, ctx.message.text);
+    ctx.session.stage = "null";
+  } else if (ctx.session.stage === "updateStudentData") {
+    await botUpdateDataExecute(ctx);
     ctx.session.stage = "null";
   } else {
     await ctx.reply("Введите команду /start для начала.");

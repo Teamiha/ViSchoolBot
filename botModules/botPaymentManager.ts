@@ -4,7 +4,12 @@ import {
 } from "../botStatic/keyboard.ts";
 import { MyContext } from "../bot.ts";
 import { InlineKeyboard } from "@grammyjs/bot";
-import { addActiveStudent, updateUser, deleteUser, getUser } from "../DB/mainDB.ts";
+import {
+  addActiveStudent,
+  deleteUser,
+  getUser,
+  updateUser,
+} from "../DB/mainDB.ts";
 import { removePaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
 import { getKv } from "../botStatic/kvClient.ts";
 
@@ -57,14 +62,14 @@ export async function botFinalConfirmPayment(ctx: MyContext) {
 
     // Формируем сообщение с ссылкой на курс
     let message = "Ваша оплата была подтверждена!\n";
-    
+
     if (userCourses.length > 0) {
       message += "\nСсылка для присоединения к курсу:\n";
-      userCourses.forEach(course => {
+      userCourses.forEach((course) => {
         message += `${course.name}: ${course.link}\n`;
       });
     }
-    
+
     message += "\nНажмите /start чтобы попасть в меню учащегося";
 
     await ctx.api.sendMessage(userId, message);
@@ -87,27 +92,33 @@ export async function botPaymentProblems(ctx: MyContext) {
   if (ctx.match) {
     const userId = Number(ctx.match[1]);
 
-    const message = "Возникли сложности с оплатой, пожалуйста, напишите @Bodhisattva_vi напрямую.";
+    const message =
+      "Возникли сложности с оплатой, пожалуйста, напишите @Bodhisattva_vi напрямую.";
 
     await ctx.api.sendMessage(userId, message);
 
-    await ctx.reply("Пользователь уведомлен о проблеме с оплатой", { reply_markup: adminKeyboard });
+    await ctx.reply("Пользователь уведомлен о проблеме с оплатой", {
+      reply_markup: adminKeyboard,
+    });
   }
 }
 
 export async function setCoursePrice(ctx: MyContext) {
-  await ctx.reply("Напиши новую цену курса \n" +
-    `Можешь писать как тебе удобно, например: "10 000 рублей"`);
+  await ctx.reply(
+    "Напиши новую цену курса \n" +
+      `Можешь писать как тебе удобно, например: "10 000 рублей"`,
+  );
   ctx.session.stage = "setCoursePrice";
 }
 
 export async function setCoursePriceExecute(ctx: MyContext, price: string) {
   const kv = await getKv();
   await kv.set(["ViBot", "coursePrice"], price);
-  await ctx.reply("Цена курса установлена, новая цена: " + price, { reply_markup: adminKeyboard });
+  await ctx.reply("Цена курса установлена, новая цена: " + price, {
+    reply_markup: adminKeyboard,
+  });
 
   console.log("Course price set to", price);
-
 }
 
 export async function getCoursePrice() {

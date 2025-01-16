@@ -1,20 +1,20 @@
 import { MyContext } from "../bot.ts";
 import {
   addCourse,
+  completeCourse,
   getCourseByName,
   removeCourse,
-  completeCourse,
 } from "../DB/courseManagerDB.ts";
 import {
-  courseKeyboard,
-  createCoursesSelectionKeyboard,
   adminKeyboard,
+  courseKeyboard,
   createCourseCompletionKeyboard,
+  createCoursesSelectionKeyboard,
 } from "../botStatic/keyboard.ts";
 import { SVETLOVID, VIID } from "../config.ts";
 import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
 import { getCoursePrice } from "./botPaymentManager.ts";
-import { userExists, updateUser } from "../DB/mainDB.ts";
+import { updateUser, userExists } from "../DB/mainDB.ts";
 
 export async function botCourseManager(ctx: MyContext) {
   await ctx.editMessageText("Управление курсами:");
@@ -102,7 +102,7 @@ export async function botChoseCourse(ctx: MyContext) {
   ctx.session.stage = "paymentProcess";
   await ctx.reply(
     "Цена курса: " + price + "\n" +
-    "Пожалуйста, отправьте фото с квитанцией оплаты \n" +
+      "Пожалуйста, отправьте фото с квитанцией оплаты \n" +
       "Варианты оплаты: \n" +
       `Номер карты Тинькофф:
        5536 9138 2905 0125
@@ -134,8 +134,8 @@ export async function botCompleteCourseExecute(ctx: MyContext) {
   await removeCourse(courseName);
   await ctx.reply(
     `Курс "${courseName}" завершен. \n` +
-    "Все студенты исключены из курса и переведены в историю.",
-    { reply_markup: adminKeyboard }
+      "Все студенты исключены из курса и переведены в историю.",
+    { reply_markup: adminKeyboard },
   );
 }
 

@@ -7,10 +7,9 @@ import {
   getStudentHomework,
 } from "../DB/homeworkManagerDB.ts";
 import { getUser } from "../DB/mainDB.ts";
-import { homeworkResponseKeyboard, backButton } from "../botStatic/keyboard.ts";
+import { backButton, homeworkResponseKeyboard } from "../botStatic/keyboard.ts";
 import { SVETLOVID } from "../config.ts";
 import { submitHomework } from "../DB/homeworkManagerDB.ts";
-
 
 export async function botCheckHomework(ctx: MyContext) {
   const { keyboard, isEmpty } = await createHomeworkCheckKeyboard();
@@ -146,7 +145,7 @@ export async function botAcceptHomework(ctx: MyContext) {
 
   const studentId = ctx.match?.[1];
   const courseName = ctx.match?.[2];
-  
+
   if (!studentId || !courseName) {
     console.log("Error acceptHomework: No student ID or course name provided");
     return;

@@ -22,7 +22,7 @@ export const registrationKeyboard = new InlineKeyboard()
 export const studentKeyboard = new InlineKeyboard()
   .text("Сдать домашнее задание", "sendHomework")
   .row()
-  .text("Повторно получить приглашение в группу", "groupInvite")
+  .text("Обновить личные данные", "updateStudentData")
   .row()
   .text("Завершить обучение", "endLearning");
 
@@ -48,12 +48,21 @@ export const courseKeyboard = new InlineKeyboard()
   .row()
   .text("Назад", "backToAdminMain");
 
-  export const memberKeyboard = new InlineKeyboard()
+export const memberKeyboard = new InlineKeyboard()
   .text("Посмотреть доступные курсы", "viewCourses")
   .row()
-  .text("Пройти регистрацию заново", "startRegistration")
+  .text("Обновить личные данные", "updateStudentData")
   .row()
   .text("О боте", "aboutBot");
+
+export const updateDataKeyboard = new InlineKeyboard()
+  .text("Изменить школу", "update:school")
+  .row()
+  .text("Изменить класс", "update:class")
+  .row()
+  .text("Изменить кто регистрировал", "update:hwoRegistered")
+  .row()
+  .text("Назад", "backToStudent");
 
 export async function createPaymentConfirmationKeyboard(): Promise<{
   keyboard: InlineKeyboard;
@@ -85,7 +94,9 @@ export async function createPaymentConfirmationKeyboard(): Promise<{
   return { keyboard: keyboard, isEmpty: false };
 }
 
-export async function createCoursesSelectionKeyboard(isAdmin: boolean = false): Promise<{
+export async function createCoursesSelectionKeyboard(
+  isAdmin: boolean = false,
+): Promise<{
   keyboard: InlineKeyboard;
   isEmpty: boolean;
 }> {
@@ -153,7 +164,6 @@ export const homeworkResponseKeyboard = (
     .row()
     .text("Назад", "backToAdminMain");
 
-
 export async function createCourseCompletionKeyboard(): Promise<{
   keyboard: InlineKeyboard;
   isEmpty: boolean;
@@ -167,9 +177,9 @@ export async function createCourseCompletionKeyboard(): Promise<{
 
   for (const course of courses) {
     keyboard.text(
-        `Завершить курс: ${course.name}`,
-        `complete_course:${course.name}`
-      ).row();
+      `Завершить курс: ${course.name}`,
+      `complete_course:${course.name}`,
+    ).row();
   }
 
   keyboard.text("Назад", "backToAdminMain").row();

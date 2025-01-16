@@ -6,13 +6,16 @@ import {
 } from "../DB/mainDB.ts";
 import {
   adminKeyboard,
+  memberKeyboard,
   registrationKeyboard,
   studentKeyboard,
-  memberKeyboard,
 } from "../botStatic/keyboard.ts";
 import { SVETLOVID, VIID } from "../config.ts";
 import { getRandomCompliment } from "../botStatic/compliment.ts";
-import { hasTemporaryRegistration, deleteTemporaryUser } from "../DB/temporaryUserDB.ts";
+import {
+  deleteTemporaryUser,
+  hasTemporaryRegistration,
+} from "../DB/temporaryUserDB.ts";
 
 export async function botStart(ctx: MyContext) {
   const userId = ctx.from?.id;
@@ -27,7 +30,7 @@ export async function botStart(ctx: MyContext) {
     const userIsTemporary = await hasTemporaryRegistration(userId);
     const hasPaymentInProcess = await getUserPaymentInProcess(userId);
 
-    if (userId === Number(VIID) || userId === Number(SVETLOVID)) {
+    if (userId === Number(VIID)) {
       await ctx.reply(
         `Добро пожаловать Виктория! Помни что ${getRandomCompliment()}`,
         {
@@ -57,11 +60,11 @@ export async function botStart(ctx: MyContext) {
     }
 
     if (userIsStudent === true) {
-        await ctx.reply("Добро пожаловать! Выберите действие:", {
-          reply_markup: studentKeyboard,
-        });
-        return;
-      }
+      await ctx.reply("Добро пожаловать! Выберите действие:", {
+        reply_markup: studentKeyboard,
+      });
+      return;
+    }
 
     if (ifUserExists === true) {
       await ctx.reply("Добро пожаловать. Сейчас у вас нет активных курсов.", {
@@ -76,7 +79,5 @@ export async function botStart(ctx: MyContext) {
       });
       return;
     }
-
-    
   }
 }
