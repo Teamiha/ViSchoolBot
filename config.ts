@@ -1,5 +1,7 @@
-export const VIID = 454029119;
-export const SVETLOVID = 526827458;
+// export const VIID = 454029119;
+// export const ADMIN_ID = 454029119;
+
+// export const SVETLOVID = 526827458;
 export const ADMIN_ID = 526827458;
 
 // export const SVETLOVID = 5268274;

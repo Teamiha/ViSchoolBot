@@ -10,7 +10,7 @@ import {
   registrationKeyboard,
   studentKeyboard,
 } from "../botStatic/keyboard.ts";
-import { SVETLOVID, VIID } from "../config.ts";
+import { ADMIN_ID } from "../config.ts";
 import { getRandomCompliment } from "../botStatic/compliment.ts";
 import {
   deleteTemporaryUser,
@@ -30,7 +30,7 @@ export async function botStart(ctx: MyContext) {
     const userIsTemporary = await hasTemporaryRegistration(userId);
     const hasPaymentInProcess = await getUserPaymentInProcess(userId);
 
-    if (userId === Number(VIID) || userId === Number(SVETLOVID)) {
+    if (userId === Number(ADMIN_ID)) {
       await ctx.reply(
         `Добро пожаловать Виктория! Помни что ${getRandomCompliment()}`,
         {

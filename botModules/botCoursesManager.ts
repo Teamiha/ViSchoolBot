@@ -11,7 +11,7 @@ import {
   createCourseCompletionKeyboard,
   createCoursesSelectionKeyboard,
 } from "../botStatic/keyboard.ts";
-import { VIID } from "../config.ts";
+import { ADMIN_ID } from "../config.ts";
 import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
 import { getCoursePrice } from "./botPaymentManager.ts";
 import { updateUser, userExists } from "../DB/mainDB.ts";
@@ -74,7 +74,7 @@ export async function botChoseCourse(ctx: MyContext) {
   const userId = ctx.from?.id;
   const courseName = ctx.match?.[1];
 
-  if (userId === Number(VIID)) {
+  if (userId === Number(ADMIN_ID)) {
     if (courseName) {
       await removeCourse(courseName);
       await ctx.reply("Курс удалён!", {

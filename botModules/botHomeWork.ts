@@ -8,7 +8,7 @@ import {
 } from "../DB/homeworkManagerDB.ts";
 import { getUser } from "../DB/mainDB.ts";
 import { backButton, homeworkResponseKeyboard } from "../botStatic/keyboard.ts";
-import { SVETLOVID } from "../config.ts";
+import { ADMIN_ID } from "../config.ts";
 import { submitHomework } from "../DB/homeworkManagerDB.ts";
 
 export async function botCheckHomework(ctx: MyContext) {
@@ -75,7 +75,7 @@ export async function botStudentSendHomeworkExecute(ctx: MyContext) {
   );
 
   await ctx.api.sendMessage(
-    SVETLOVID,
+    ADMIN_ID,
     `Учащийся (ID: ${studentId}, @${userNickname}, ${userName}) отправил домашнее задание.\n` +
       `Проверить его работу можно в разделе "Проверить домашние задания".`,
   );
@@ -102,7 +102,7 @@ export async function botSelectHomework(ctx: MyContext) {
     return;
   }
 
-  const teacherId = Number(SVETLOVID); // или можно использовать SVETLOVID
+  const teacherId = Number(ADMIN_ID); // или можно использовать SVETLOVID
   await ctx.api.forwardMessage(
     teacherId,
     homework.chatId,
