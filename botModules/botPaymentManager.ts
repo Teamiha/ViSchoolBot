@@ -31,7 +31,8 @@ export async function botConfirmPayment(ctx: MyContext) {
       {
         reply_markup: new InlineKeyboard()
           .text("Да", `final_confirm_payment:${userId}`)
-          .text("Нет", `cancel_confirmation:${userId}`),
+          .text("Нет (удалить пользователя)", `cancel_confirmation:${userId}`)
+          .text("Возникли сложности", `payment_problems:${userId}`),
       },
     );
   }
@@ -78,5 +79,17 @@ export async function botCancelConfirmation(ctx: MyContext) {
       "Оплата отклонена, пользователь удалён",
       { reply_markup: adminKeyboard },
     );
+  }
+}
+
+export async function botPaymentProblems(ctx: MyContext) {
+  if (ctx.match) {
+    const userId = Number(ctx.match[1]);
+
+    const message = "Возникли сложности с оплатой, пожалуйста, напишите @Bodhisattva_vi напрямую.";
+
+    await ctx.api.sendMessage(userId, message);
+
+    await ctx.reply("Пользователь уведомлен о проблеме с оплатой", { reply_markup: adminKeyboard });
   }
 }

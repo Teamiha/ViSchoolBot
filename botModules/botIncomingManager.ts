@@ -22,7 +22,8 @@ export async function botTextProcessing(ctx: MyContext) {
     const messageText = ctx.message.text;
     await updateTemporaryUser(ctx.from?.id, "hwoRegistered", messageText);
     ctx.session.stage = "askBirthDate";
-    await ctx.reply("Напишите дату рождения учащегося");
+    await ctx.reply("Напишите дату рождения учащегося в формате YYYY-MM-DD \n" +
+    "Например если дата рождения 31 февраля 2001 года, то напишите 2001-02-28");
   } else if (ctx.session.stage === "askBirthDate") {
     const messageText = ctx.message.text;
     await updateTemporaryUser(ctx.from?.id, "birthday", messageText);
@@ -39,7 +40,7 @@ export async function botTextProcessing(ctx: MyContext) {
     ctx.session.stage = "askCourses";
     const { keyboard, isEmpty } = await createCoursesSelectionKeyboard(false);
     if (isEmpty) {
-      await ctx.reply("Курсов нет, напишите администратору");
+      await ctx.reply("Сейчас открытых курсов нет, следите за новостями в нашей группе.");
     } else {
       await ctx.reply("Выберете курс для учащегося", {
         reply_markup: keyboard,
