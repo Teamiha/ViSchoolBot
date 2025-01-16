@@ -162,3 +162,9 @@ export async function isUserBlocked(userId: number): Promise<boolean> {
 
   return blockedList.includes(userId);
 }
+
+export async function userExists(userId: number): Promise<boolean> {
+  const kv = await getKv();
+  const user = await kv.get<UserData>(["ViBot", "userId:", userId]);
+  return !!user.value;
+}

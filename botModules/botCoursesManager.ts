@@ -14,6 +14,7 @@ import {
 import { SVETLOVID, VIID } from "../config.ts";
 import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
 import { getCoursePrice } from "./botPaymentManager.ts";
+import { userExists, updateUser } from "../DB/mainDB.ts";
 
 export async function botCourseManager(ctx: MyContext) {
   await ctx.editMessageText("Управление курсами:");
@@ -85,7 +86,13 @@ export async function botChoseCourse(ctx: MyContext) {
   }
 
   if (userId && courseName) {
+    const ifUserExists = await userExists(userId);
     const course = await getCourseByName(courseName);
+
+    if (ifUserExists === true && course) {
+      await updateUser(userId, "courses", [course]);
+    }
+
     if (course) {
       await updateTemporaryUser(userId, "courses", [course]);
     }
@@ -130,4 +137,15 @@ export async function botCompleteCourseExecute(ctx: MyContext) {
     "Все студенты исключены из курса и переведены в историю.",
     { reply_markup: adminKeyboard }
   );
+}
+
+export async function botViewCoursesForExistingUser(ctx: MyContext) {
+  const { keyboard, isEmpty } = await createCoursesSelectionKeyboard(false);
+  if (isEmpty) {
+    await ctx.reply("Курсов нет");
+  } else {
+    await ctx.reply("Выберите курс, который хотите пройти", {
+      reply_markup: keyboard,
+    });
+  }
 }

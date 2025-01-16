@@ -48,6 +48,13 @@ export const courseKeyboard = new InlineKeyboard()
   .row()
   .text("Назад", "backToAdminMain");
 
+  export const memberKeyboard = new InlineKeyboard()
+  .text("Посмотреть доступные курсы", "viewCourses")
+  .row()
+  .text("Пройти регистрацию заново", "startRegistration")
+  .row()
+  .text("О боте", "aboutBot");
+
 export async function createPaymentConfirmationKeyboard(): Promise<{
   keyboard: InlineKeyboard;
   isEmpty: boolean;

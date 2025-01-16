@@ -21,6 +21,7 @@ import {
   botCourseManager,
   botCompleteCourseExecute,
   botCompleteCourse,
+  botViewCoursesForExistingUser,
 } from "./botModules/botCoursesManager.ts";
 import {
   botCheckHomework,
@@ -120,6 +121,11 @@ bot.callbackQuery("setCoursePrice", async (ctx) => {
 bot.callbackQuery("completeCourse", async (ctx) => {
   await ctx.answerCallbackQuery();
   await botCompleteCourse(ctx);
+});
+
+bot.callbackQuery("viewCourses", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botViewCoursesForExistingUser(ctx);
 });
 
 bot.callbackQuery(/^complete_course:(.+)$/, async (ctx) => {
