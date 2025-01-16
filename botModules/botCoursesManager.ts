@@ -29,9 +29,15 @@ export async function botAddCourseStart(ctx: MyContext) {
 }
 
 export async function botAddCourseExecute(ctx: MyContext) {
-  if (!ctx.message) return;
+  if (!ctx.message) {
+    console.log("Error botAddCourseExecute: No message provided");
+    return;
+  }
   const messageText = ctx.message.text;
-  if (!messageText) return;
+  if (!messageText) {
+    console.log("Error botAddCourseExecute: No message text provided");
+    return;
+  }
   const [courseName, courseLink] = messageText.split(",").map((item) =>
     item.trim()
   );
@@ -102,7 +108,7 @@ export async function botCompleteCourse(ctx: MyContext) {
   const courseName = ctx.match?.[1];
   if (!courseName) {
     await ctx.reply("Ошибка! Напиши о ней Мише");
-    console.log("Error: No course name provided");
+    console.log("Error botCompleteCourse: No course name provided");
     return;
   }
   await completeCourse(courseName);

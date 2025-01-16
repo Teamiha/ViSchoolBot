@@ -34,9 +34,18 @@ export async function botStudentSendHomework(ctx: MyContext) {
 }
 
 export async function botStudentSendHomeworkExecute(ctx: MyContext) {
-  if (!ctx.from?.id) return;
-  if (!ctx.message?.photo) return;
-  if (!ctx.chat?.id) return;
+  if (!ctx.from?.id) {
+    console.log("Error studentSendHomeworkExecute: No user ID provided");
+    return;
+  }
+  if (!ctx.message?.photo) {
+    console.log("Error studentSendHomeworkExecute: No photo provided");
+    return;
+  }
+  if (!ctx.chat?.id) {
+    console.log("Error studentSendHomeworkExecute: No chat ID provided");
+    return;
+  }
 
   const studentId = ctx.from.id;
   const messageId = ctx.message.message_id;
@@ -75,7 +84,10 @@ export async function botStudentSendHomeworkExecute(ctx: MyContext) {
 
 export async function botSelectHomework(ctx: MyContext) {
   const [studentId, courseName] = ctx.match?.[1].split(":") || [];
-  if (!studentId || !courseName) return;
+  if (!studentId || !courseName) {
+    console.log("Error selectHomework: No student ID or course name provided");
+    return;
+  }
 
   const homework = await getHomeworkSubmission(`${studentId}:${courseName}`);
   if (!homework) {
@@ -135,7 +147,10 @@ export async function botAcceptHomework(ctx: MyContext) {
   const studentId = ctx.match?.[1];
   const courseName = ctx.match?.[2];
   
-  if (!studentId || !courseName) return;
+  if (!studentId || !courseName) {
+    console.log("Error acceptHomework: No student ID or course name provided");
+    return;
+  }
 
   await deleteHomework(Number(studentId), courseName);
   console.log("Homework deleted for user", studentId);
@@ -152,7 +167,10 @@ export async function botReviseHomework(ctx: MyContext) {
   await ctx.answerCallbackQuery();
 
   const [studentId, courseName] = ctx.match?.[1].split(":") || [];
-  if (!studentId || !courseName) return;
+  if (!studentId || !courseName) {
+    console.log("Error reviseHomework: No student ID or course name provided");
+    return;
+  }
 
   ctx.session.stage = "commentToHomework";
   ctx.session.homeworkData = { studentId, courseName };
@@ -161,8 +179,14 @@ export async function botReviseHomework(ctx: MyContext) {
 }
 
 export async function botReviseHomeworkExecute(ctx: MyContext) {
-  if (!ctx.message?.text) return;
-  if (!ctx.session.homeworkData) return;
+  if (!ctx.message?.text) {
+    console.log("Error reviseHomeworkExecute: No message text provided");
+    return;
+  }
+  if (!ctx.session.homeworkData) {
+    console.log("Error reviseHomeworkExecute: No homework data provided");
+    return;
+  }
 
   const { studentId, courseName } = ctx.session.homeworkData;
   const comment = ctx.message.text;

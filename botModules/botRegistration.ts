@@ -28,9 +28,18 @@ export async function botRegistration(ctx: MyContext) {
 }
 
 export async function botRegistrationExecute(ctx: MyContext) {
-  if (!ctx.from?.id) return;
-  if (!ctx.message?.photo) return;
-  if (!ctx.chat?.id) return;
+  if (!ctx.from?.id) {
+    console.log("Error botRegistrationExecute: No user ID provided");
+    return;
+  }
+  if (!ctx.message?.photo) {
+    console.log("Error botRegistrationExecute: No photo provided");
+    return;
+  }
+  if (!ctx.chat?.id) {
+    console.log("Error botRegistrationExecute: No chat ID provided");
+    return;
+  }
 
   const userId = ctx.from?.id;
 
@@ -62,7 +71,8 @@ export async function botRegistrationExecute(ctx: MyContext) {
   );
 
   await ctx.reply(
-    "Спасибо! После подтверждения оплаты, вам прийдет сообщение о завершении регистрации.",
+    "Спасибо! После подтверждения оплаты, вам прийдет сообщение о завершении регистрации. \n" +
+      "Не волнуйтесь о времени, вы уложились в 30 минут, время ожидания подтверждения оплаты не учитывается.",
   );
 
   console.log("Payment in process for user", userId);

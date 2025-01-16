@@ -10,8 +10,14 @@ import { botRegistrationExecute } from "./botRegistration.ts";
 import { setCoursePriceExecute } from "./botPaymentManager.ts";
 
 export async function botTextProcessing(ctx: MyContext) {
-  if (!ctx.message?.text) return;
-  if (!ctx.from?.id) return;
+  if (!ctx.message?.text) {
+    console.log("Error botTextProcessing: No message text provided");
+    return;
+  }
+  if (!ctx.from?.id) {
+    console.log("Error botTextProcessing: No user ID provided");
+    return;
+  }
 
   if (ctx.session.stage === "askName") {
     const messageText = ctx.message.text;
