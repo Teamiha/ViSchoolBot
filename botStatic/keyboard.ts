@@ -42,6 +42,8 @@ export const courseKeyboard = new InlineKeyboard()
   .row()
   .text("Список курсов/удаление", "listCourses")
   .row()
+  .text("Установить цену на курсы", "setCoursePrice")
+  .row()
   .text("Назад", "backToAdminMain");
 
 export async function createPaymentConfirmationKeyboard(): Promise<{

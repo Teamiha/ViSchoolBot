@@ -6,6 +6,7 @@ import { MyContext } from "../bot.ts";
 import { InlineKeyboard } from "@grammyjs/bot";
 import { addActiveStudent, updateUser, deleteUser, getUser } from "../DB/mainDB.ts";
 import { removePaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
+import { getKv } from "../botStatic/kvClient.ts";
 
 export async function botCheckPayments(ctx: MyContext) {
   const { keyboard, isEmpty } = await createPaymentConfirmationKeyboard();
@@ -92,4 +93,28 @@ export async function botPaymentProblems(ctx: MyContext) {
 
     await ctx.reply("Пользователь уведомлен о проблеме с оплатой", { reply_markup: adminKeyboard });
   }
+}
+
+export async function setCoursePrice(ctx: MyContext) {
+  await ctx.reply("Напиши новую цену курса \n" +
+    `Можешь писать как тебе удобно, например: "10 000 рублей"`);
+  ctx.session.stage = "setCoursePrice";
+}
+
+export async function setCoursePriceExecute(ctx: MyContext, price: string) {
+  const kv = await getKv();
+  await kv.set(["ViBot", "coursePrice"], price);
+  await ctx.reply("Цена курса установлена, новая цена: " + price, { reply_markup: adminKeyboard });
+
+  console.log("Course price set to", price);
+
+}
+
+export async function getCoursePrice() {
+  const kv = await getKv();
+  const price = await kv.get(["ViBot", "coursePrice"]);
+  if (!price) {
+    return "Цена курса не установлена";
+  }
+  return price;
 }

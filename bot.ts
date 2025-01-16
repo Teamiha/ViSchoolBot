@@ -8,6 +8,7 @@ import {
   botConfirmPayment,
   botFinalConfirmPayment,
   botCancelConfirmation,
+  setCoursePrice,
 } from "./botModules/botPaymentManager.ts";
 import {
   botPhotoProcessing,
@@ -42,6 +43,7 @@ export interface SessionData {
     | "sendHomework"
     | "commentToHomework"
     | "askQuestion"
+    | "setCoursePrice"
     | "makeNotes";
   homeworkData?: {
     studentId: string;
@@ -106,6 +108,11 @@ bot.callbackQuery("checkHomework", async (ctx) => {
 bot.callbackQuery("sendHomework", async (ctx) => {
   await ctx.answerCallbackQuery();
   await botStudentSendHomework(ctx);
+});
+
+bot.callbackQuery("setCoursePrice", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await setCoursePrice(ctx);
 });
 
 bot.callbackQuery(/^accept_homework:(\d+):(.+)$/, async (ctx) => {

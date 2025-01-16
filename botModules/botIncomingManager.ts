@@ -1,12 +1,13 @@
 import { MyContext } from "../bot.ts";
 import { createCoursesSelectionKeyboard } from "../botStatic/keyboard.ts";
-import { botAddCourseExecute } from "./botCoursesManager.ts";
+import { botAddCourseExecute} from "./botCoursesManager.ts";
 import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
 import {
   botReviseHomeworkExecute,
   botStudentSendHomeworkExecute,
 } from "./botHomeWork.ts";
 import { botRegistrationExecute } from "./botRegistration.ts";
+import { setCoursePriceExecute } from "./botPaymentManager.ts";
 
 export async function botTextProcessing(ctx: MyContext) {
   if (!ctx.message?.text) return;
@@ -51,6 +52,9 @@ export async function botTextProcessing(ctx: MyContext) {
     ctx.session.stage = "null";
   } else if (ctx.session.stage === "commentToHomework") {
     await botReviseHomeworkExecute(ctx);
+    ctx.session.stage = "null";
+  } else if (ctx.session.stage === "setCoursePrice") {
+    await setCoursePriceExecute(ctx, ctx.message.text);
     ctx.session.stage = "null";
   } else {
     await ctx.reply("Введите команду /start для начала.");

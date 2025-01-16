@@ -10,7 +10,7 @@ import {
 } from "../botStatic/keyboard.ts";
 import { SVETLOVID, VIID } from "../config.ts";
 import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
-
+import { getCoursePrice } from "./botPaymentManager.ts";
 export async function botCourseManager(ctx: MyContext) {
   await ctx.editMessageText("Управление курсами:");
   await ctx.editMessageReplyMarkup({ reply_markup: courseKeyboard });
@@ -80,9 +80,11 @@ export async function botChoseCourse(ctx: MyContext) {
       await updateTemporaryUser(userId, "courses", [course]);
     }
   }
+  const price = await getCoursePrice();
 
   ctx.session.stage = "paymentProcess";
   await ctx.reply(
+    "Цена курса: " + price + "\n" +
     "Пожалуйста, отправьте фото с квитанцией оплаты \n" +
       "Варианты оплаты: \n" +
       `Номер карты Тинькофф:
