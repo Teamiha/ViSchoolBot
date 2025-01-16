@@ -7,6 +7,8 @@ import {
   botHandleUpdateField,
   botRegistration,
   botUpdateStudentData,
+  botSelfUnsubscribe,
+  botSelfUnsubscribeExecute,
 } from "./botModules/botRegistration.ts";
 import {
   botCancelConfirmation,
@@ -151,6 +153,16 @@ bot.callbackQuery("completeCourse", async (ctx) => {
 bot.callbackQuery("viewCourses", async (ctx) => {
   await ctx.answerCallbackQuery();
   await botViewCoursesForExistingUser(ctx);
+});
+
+bot.callbackQuery("endLearning", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botSelfUnsubscribe(ctx);
+});
+
+bot.callbackQuery(/^self_unsubscribe:(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botSelfUnsubscribeExecute(ctx);
 });
 
 bot.callbackQuery(/^update:(.+)$/, async (ctx) => {

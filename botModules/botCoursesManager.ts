@@ -11,7 +11,7 @@ import {
   createCourseCompletionKeyboard,
   createCoursesSelectionKeyboard,
 } from "../botStatic/keyboard.ts";
-import { SVETLOVID, VIID } from "../config.ts";
+import { VIID } from "../config.ts";
 import { updateTemporaryUser } from "../DB/temporaryUserDB.ts";
 import { getCoursePrice } from "./botPaymentManager.ts";
 import { updateUser, userExists } from "../DB/mainDB.ts";

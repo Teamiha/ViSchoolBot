@@ -7,8 +7,11 @@ import { MyContext } from "../bot.ts";
 import { getUser, updateUser, UserData } from "../DB/mainDB.ts";
 import { ADMIN_ID } from "../config.ts";
 import { addPaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
-import { studentKeyboard, updateDataKeyboard } from "../botStatic/keyboard.ts";
+import { updateDataKeyboard } from "../botStatic/keyboard.ts";
 import { botStart } from "./botStart.ts";
+import { InlineKeyboard } from "@grammyjs/bot";
+import { moveCoursesToHistory } from "../DB/courseManagerDB.ts";
+import { removeActiveStudent } from "../DB/mainDB.ts";
 
 export async function botRegistration(ctx: MyContext) {
   if (ctx.from?.id) {
@@ -115,4 +118,43 @@ export async function botUpdateDataExecute(ctx: MyContext) {
   await botStart(ctx);
 
   ctx.session.updateField = undefined;
+}
+
+export async function botSelfUnsubscribe(ctx: MyContext) {
+    if (ctx.match) {
+      const userId = Number(ctx.match[1]);
+  
+      await ctx.reply(
+        `Вы уверены, что хотите завершить обучение и уйти с курса?`,
+        {
+          reply_markup: new InlineKeyboard()
+            .text("Да", `self_unsubscribe:${userId}`)
+            .text("Нет", `backToStudent`),
+        },
+      );
+    }
+  }
+    
+export async function botSelfUnsubscribeExecute(ctx: MyContext) {
+    if (ctx.match) {
+        const userId = Number(ctx.match[1]);
+
+        const userData = await getUser(Number(userId));
+        if (!userData.value) {
+            await ctx.reply("Ошибка: данные ученика не найдены");
+            console.log("User data not found for user", userId);
+            return;
+        }
+
+        await moveCoursesToHistory(userId);
+
+        await removeActiveStudent(userId);
+
+        await ctx.reply("Вы завершили обучение и ушли с курса.");
+
+        await ctx.api.sendMessage(
+            ADMIN_ID,
+            `Учащийся (ID: ${userId}, @${userData.value.nickName}, ${userData.value.name}) завершил обучение и ушел с курса.`,
+        );
+    }
 }
