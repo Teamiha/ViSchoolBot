@@ -6,9 +6,9 @@ import { adminKeyboard, backToAdminMain } from "./botStatic/keyboard.ts";
 import {
   botHandleUpdateField,
   botRegistration,
-  botUpdateStudentData,
   botSelfUnsubscribe,
   botSelfUnsubscribeExecute,
+  botUpdateStudentData,
 } from "./botModules/botRegistration.ts";
 import {
   botCancelConfirmation,
@@ -37,6 +37,7 @@ import {
   botSelectHomework,
   botStudentSendHomework,
 } from "./botModules/botHomeWork.ts";
+import { botAbout } from "./botModules/botAbout.ts";
 
 export interface SessionData {
   stage:
@@ -72,7 +73,7 @@ if (!BOT_TOKEN) {
 const bot = new Bot<MyContext>(BOT_TOKEN);
 
 bot.use(limit({
-  timeFrame: 2000,
+  timeFrame: 1000,
   limit: 1,
   onLimitExceeded: async (ctx) => {
     await ctx.reply("Пожалуйста, подождите немного перед следующим действием");
@@ -88,6 +89,11 @@ bot.use(session({
 bot.command("start", async (ctx) => {
   ctx.session.stage = "null";
   await botStart(ctx);
+});
+
+bot.callbackQuery("aboutBot", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botAbout(ctx);
 });
 
 bot.callbackQuery("startRegistration", async (ctx) => {
