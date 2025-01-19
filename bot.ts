@@ -38,6 +38,11 @@ import {
   botStudentSendHomework,
 } from "./botModules/botHomeWork.ts";
 import { botAbout } from "./botModules/botAbout.ts";
+import {
+  botManageStudents,
+  botDeleteStudentFromActive,
+  botDeleteStudentFromActiveExecute,
+} from "./botModules/botStudentManager.ts";
 
 export interface SessionData {
   stage:
@@ -161,10 +166,25 @@ bot.callbackQuery("viewCourses", async (ctx) => {
   await botViewCoursesForExistingUser(ctx);
 });
 
+bot.callbackQuery("manageStudents", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botManageStudents(ctx);
+});
+
+bot.callbackQuery("deleteStudentFromCourse", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botDeleteStudentFromActive(ctx);
+});
+
 // bot.callbackQuery("endLearning", async (ctx) => {
 //   await ctx.answerCallbackQuery();
 //   await botSelfUnsubscribe(ctx);
 // });
+
+bot.callbackQuery(/^delete_student_from_course:(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botDeleteStudentFromActiveExecute(ctx);
+});
 
 bot.callbackQuery(/^self_unsubscribe:(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();

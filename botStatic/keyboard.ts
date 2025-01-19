@@ -31,7 +31,15 @@ export const adminKeyboard = new InlineKeyboard()
   .row()
   .text("Проверить домашние задания", "checkHomework")
   .row()
-  .text("Управление курсами", "manageCourses");
+  .text("Управление курсами", "manageCourses")
+  .row()
+  .text("Управление студентами", "manageStudents");
+
+export const manageStudentsKeyboard = new InlineKeyboard()
+  .text("Удалить студента с курса", "deleteStudentFromCourse")
+  .row()
+  .text("Назад", "backToAdminMain");
+
 
 export const courseKeyboard = new InlineKeyboard()
   .text("Добавить курс", "addCourse")
@@ -59,6 +67,35 @@ export const updateDataKeyboard = new InlineKeyboard()
   .text("Изменить кто регистрировал", "update:hwoRegistered")
   .row()
   .text("Назад", "backToStudent");
+
+export async function createActiveStudentsKeyboard(): Promise<{
+  keyboard: InlineKeyboard;
+  isEmpty: boolean;
+}> {
+  const kv = await getKv();
+  const result = await kv.get<number[]>(["ViBot", "activeStudentList"]);
+  const activeStudents = result.value || [];
+
+  const keyboard = new InlineKeyboard();
+
+  if (activeStudents.length === 0) {
+    return { keyboard: keyboard, isEmpty: true };
+  }
+
+  for await (const studentId of activeStudents) {
+    const userData = await kv.get<UserData>(["ViBot", "userId:", studentId]);
+    if (userData.value) {
+      const userName = userData.value.nickName || "Нет username";
+      const name = userData.value.name || "Нет имени";
+      const buttonText = `ID: ${studentId} | @${userName} | ${name}`;
+      keyboard.text(buttonText, `delete_student_from_course:${studentId}`).row();
+    }
+  }
+
+  keyboard.text("Назад", "backToAdminMain").row();
+
+  return { keyboard: keyboard, isEmpty: false };
+}
 
 export async function createPaymentConfirmationKeyboard(): Promise<{
   keyboard: InlineKeyboard;
