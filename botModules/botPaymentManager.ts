@@ -105,7 +105,7 @@ export async function botPaymentProblems(ctx: MyContext) {
 
 export async function setCoursePrice(ctx: MyContext) {
   await ctx.reply(
-    "Напиши новую цену курса \n" +
+    "Напиши новую цену курса. \n" +
       `Можешь писать как тебе удобно, например: "10 000 рублей"`,
   );
   ctx.session.stage = "setCoursePrice";

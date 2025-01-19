@@ -32,7 +32,7 @@ export async function botStart(ctx: MyContext) {
 
     if (userId === Number(ADMIN_ID)) {
       await ctx.reply(
-        `Добро пожаловать Виктория! Помни что ${getRandomCompliment()}`,
+        `Добро пожаловать Виктория! Помни, что ${getRandomCompliment()}`,
         {
           reply_markup: adminKeyboard,
         },

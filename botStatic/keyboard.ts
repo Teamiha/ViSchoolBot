@@ -33,7 +33,7 @@ export const adminKeyboard = new InlineKeyboard()
   .row()
   .text("Проверить домашние задания", "checkHomework")
   .row()
-  .text("Управление курсами", "manageCourses")
+  .text("Управление курсами", "manageCourses");
 
 export const courseKeyboard = new InlineKeyboard()
   .text("Добавить курс", "addCourse")

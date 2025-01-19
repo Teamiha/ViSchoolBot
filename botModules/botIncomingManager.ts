@@ -59,7 +59,7 @@ export async function botTextProcessing(ctx: MyContext) {
           "https://t.me/math_pml",
       );
     } else {
-      await ctx.reply("Выберете курс для учащегося", {
+      await ctx.reply("Выберите курс для учащегося", {
         reply_markup: keyboard,
       });
     }
