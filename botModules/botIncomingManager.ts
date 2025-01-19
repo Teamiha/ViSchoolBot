@@ -26,8 +26,10 @@ export async function botTextProcessing(ctx: MyContext) {
     const messageText = ctx.message.text;
     await updateTemporaryUser(ctx.from?.id, "name", messageText);
     ctx.session.stage = "askWhoRegistered";
-    await ctx.reply(`Выберите кто регистрируется, родитель или сам учащийся.
-                  `);
+    await ctx.reply(
+      `Выберите кто регистрируется, родитель или сам учащийся. \n` +
+        `Если вы сам учащийся, то напишите "Я ученик", в противном случае напишите "Я родитель."`,
+    );
   } else if (ctx.session.stage === "askWhoRegistered") {
     const messageText = ctx.message.text;
     await updateTemporaryUser(ctx.from?.id, "hwoRegistered", messageText);
