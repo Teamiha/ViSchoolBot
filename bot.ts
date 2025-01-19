@@ -15,6 +15,7 @@ import {
   botCheckPayments,
   botConfirmPayment,
   botFinalConfirmPayment,
+  botPaymentProblems,
   setCoursePrice,
 } from "./botModules/botPaymentManager.ts";
 import {
@@ -199,6 +200,11 @@ bot.callbackQuery(/^cancel_confirmation:(\d+)$/, async (ctx) => {
 bot.callbackQuery(/^final_confirm_payment:(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
   await botFinalConfirmPayment(ctx);
+});
+
+bot.callbackQuery(/^payment_problems:(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botPaymentProblems(ctx);
 });
 
 bot.callbackQuery(/^select_course:(.+)$/, async (ctx) => {

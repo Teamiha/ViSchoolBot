@@ -93,9 +93,9 @@ export async function botPaymentProblems(ctx: MyContext) {
     const userId = Number(ctx.match[1]);
 
     const message =
-      "Возникли сложности с оплатой, пожалуйста, напишите @Bodhisattva_vi напрямую.";
+      "Возникли сложности с оплатой, пожалуйста, напишите <a href='https://t.me/Bodhisattva_vi'>Виктории</a> напрямую.";
 
-    await ctx.api.sendMessage(userId, message);
+    await ctx.api.sendMessage(userId, message, { parse_mode: "HTML" });
 
     await ctx.reply("Пользователь уведомлен о проблеме с оплатой", {
       reply_markup: adminKeyboard,
