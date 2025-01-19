@@ -1,6 +1,8 @@
 import { getKv } from "./botStatic/kvClient.ts";
 import { UserData } from "./DB/mainDB.ts";
 import { HomeworkSubmission } from "./DB/homeworkManagerDB.ts";
+import { OAuthTokens } from "./googleSheets/sheetsDB.ts";
+
 
 export async function listAllViBotRecords() {
   const kv = await getKv();
@@ -98,12 +100,42 @@ async function createMockHomeworks() {
   console.log("\nCreated 10 mock homework submissions");
 }
 
+// const kv = await Deno.openKv(
+//     "https://api.deno.com/databases/2e98651c-42ea-4252-87db-2d523699ec9b/connect",
+//   );
+
+const kv = await getKv();
+
+export async function getAdminOAuthTokensRemoute(): Promise<
+  OAuthTokens | null
+> {
+  const result = await kv.get<OAuthTokens>(["admin", "oauthTokens"]);
+
+  return result.value || null;
+
+}
+
+export async function getAllKvList(): Promise<void> {
+  const kv = await getKv();
+  const entries = kv.list({ prefix: [] });
+
+  console.log("\n=== All KV Records ===\n");
+  
+  for await (const entry of entries) {
+    console.log("Key:", entry.key);
+    console.log("Value:", entry.value);
+    console.log("-------------------");
+  }
+}
+
 // Раскомментируйте нужную функцию для выполнения
 // createMockUsers();
 // createMockHomeworks();
 // listAllViBotRecords();
 // deleteAllViBotRecords();
 // addMockUsersToPaymentConfirmationRequests();
+
+getAllKvList();
 
 // TODO:
 

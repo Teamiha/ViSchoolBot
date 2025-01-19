@@ -9,7 +9,6 @@ import { ADMIN_ID } from "../config.ts";
 import { addPaymentConfirmationRequest } from "../DB/paymentManagerDB.ts";
 import { updateDataKeyboard } from "../botStatic/keyboard.ts";
 import { botStart } from "./botStart.ts";
-import { InlineKeyboard } from "@grammyjs/bot";
 import { moveCoursesToHistory } from "../DB/courseManagerDB.ts";
 import { removeActiveStudent } from "../DB/mainDB.ts";
 
