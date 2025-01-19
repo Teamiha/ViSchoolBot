@@ -23,8 +23,6 @@ export const studentKeyboard = new InlineKeyboard()
   .text("Сдать домашнее задание", "sendHomework")
   .row()
   .text("Обновить личные данные", "updateStudentData")
-  .row()
-  .text("Завершить обучение", "endLearning");
 
 export const adminKeyboard = new InlineKeyboard()
   .text("Выгрузка базы данных", "exportDB")

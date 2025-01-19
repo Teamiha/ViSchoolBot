@@ -120,20 +120,20 @@ export async function botUpdateDataExecute(ctx: MyContext) {
   ctx.session.updateField = undefined;
 }
 
-export async function botSelfUnsubscribe(ctx: MyContext) {
-  if (ctx.match) {
-    const userId = Number(ctx.match[1]);
+// export async function botSelfUnsubscribe(ctx: MyContext) {
+//   if (ctx.match) {
+//     const userId = Number(ctx.match[1]);
 
-    await ctx.reply(
-      `Вы уверены, что хотите завершить обучение и уйти с курса?`,
-      {
-        reply_markup: new InlineKeyboard()
-          .text("Да", `self_unsubscribe:${userId}`)
-          .text("Нет", `backToStudent`),
-      },
-    );
-  }
-}
+//     await ctx.reply(
+//       `Вы уверены, что хотите завершить обучение и уйти с курса?`,
+//       {
+//         reply_markup: new InlineKeyboard()
+//           .text("Да", `self_unsubscribe:${userId}`)
+//           .text("Нет", `backToStudent`),
+//       },
+//     );
+//   }
+// }
 
 export async function botSelfUnsubscribeExecute(ctx: MyContext) {
   if (ctx.match) {

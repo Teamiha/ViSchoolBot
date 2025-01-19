@@ -6,7 +6,6 @@ import { adminKeyboard, backToAdminMain } from "./botStatic/keyboard.ts";
 import {
   botHandleUpdateField,
   botRegistration,
-  botSelfUnsubscribe,
   botSelfUnsubscribeExecute,
   botUpdateStudentData,
 } from "./botModules/botRegistration.ts";
@@ -162,10 +161,10 @@ bot.callbackQuery("viewCourses", async (ctx) => {
   await botViewCoursesForExistingUser(ctx);
 });
 
-bot.callbackQuery("endLearning", async (ctx) => {
-  await ctx.answerCallbackQuery();
-  await botSelfUnsubscribe(ctx);
-});
+// bot.callbackQuery("endLearning", async (ctx) => {
+//   await ctx.answerCallbackQuery();
+//   await botSelfUnsubscribe(ctx);
+// });
 
 bot.callbackQuery(/^self_unsubscribe:(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
