@@ -135,7 +135,7 @@ export async function getAllKvList(): Promise<void> {
 // deleteAllViBotRecords();
 // addMockUsersToPaymentConfirmationRequests();
 
-getAllKvList();
+// getAllKvList();
 
 // TODO:
 

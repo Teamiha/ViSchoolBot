@@ -10,7 +10,7 @@ import { load } from "https://deno.land/std/dotenv/mod.ts";
 
 const env = await load();
 
-const SHEET_ID = "1y9-ZEaRBF66Kn1Ei5zJGiKDOwrWXNFxAxMRMyFKGMe0";
+export const GOOGLE_SHEET_ID = "1y9-ZEaRBF66Kn1Ei5zJGiKDOwrWXNFxAxMRMyFKGMe0";
 
 const BOT_TOKEN = env["BOT_TOKEN"] || Deno.env.get("BOT_TOKEN");
 const GOOGLE_KEY = env["GOOGLE_KEY"] || Deno.env.get("GOOGLE_KEY");

@@ -16,6 +16,7 @@ import {
   deleteTemporaryUser,
   hasTemporaryRegistration,
 } from "../DB/temporaryUserDB.ts";
+import { exportKVToSheet } from "../googleSheets/sheetsCore.ts";
 
 export async function botStart(ctx: MyContext) {
   const userId = ctx.from?.id;
@@ -79,5 +80,39 @@ export async function botStart(ctx: MyContext) {
       });
       return;
     }
+  }
+}
+
+// const message =
+//       "Возникли сложности с оплатой, пожалуйста, напишите <a href='https://t.me/Bodhisattva_vi'>Виктории</a> напрямую.";
+
+//     await ctx.api.sendMessage(userId, message, { parse_mode: "HTML" });
+
+
+export async function botExportDB(ctx: MyContext) {
+  const processingMessage = await ctx.reply("Выгружаю данные в Google Sheets, пожалуйста подождите...");
+  
+  const result = await exportKVToSheet();
+  
+  if (result.success) {
+    await ctx.api.editMessageText( 
+      processingMessage.chat.id,
+      processingMessage.message_id,
+      "База данных экспортирована в Google Sheets. \n" +
+        "Ссылка: <a href='https://docs.google.com/spreadsheets/d/1y9-ZEaRBF66Kn1Ei5zJGiKDOwrWXNFxAxMRMyFKGMe0/edit?usp=sharing'>ТЫЦ</a>",
+      {
+        parse_mode: "HTML",
+        reply_markup: adminKeyboard,
+      }
+    );
+  } else {
+    await ctx.api.editMessageText(
+      processingMessage.chat.id,
+      processingMessage.message_id,
+      `Ошибка при экспорте базы данных: ${result.error}`,
+      {
+        reply_markup: adminKeyboard,
+      }
+    );
   }
 }

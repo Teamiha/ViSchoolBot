@@ -10,6 +10,7 @@ export interface UserData {
   courses: Course[];
   courseHistory: Course[];
   hwoRegistered: string;
+  registrationDate: string;
   notes: string;
 }
 
@@ -31,6 +32,7 @@ export async function createNewUser(userId: number) {
     courses: [],
     courseHistory: [],
     hwoRegistered: "",
+    registrationDate: new Date().toISOString(),
     notes: "",
   };
 

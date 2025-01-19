@@ -15,6 +15,7 @@ export async function createTemporaryUser(userId: number) {
     courses: [],
     courseHistory: [],
     hwoRegistered: "",
+    registrationDate: "",
     notes: "",
   };
 

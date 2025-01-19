@@ -1,7 +1,7 @@
 import { Bot, Context, session, SessionFlavor } from "@grammyjs/bot";
 import { limit } from "@grammyjs/ratelimiter";
 import { BOT_TOKEN } from "./config.ts";
-import { botStart } from "./botModules/botStart.ts";
+import { botStart, botExportDB } from "./botModules/botStart.ts";
 import { adminKeyboard, backToAdminMain } from "./botStatic/keyboard.ts";
 import {
   botHandleUpdateField,
@@ -43,6 +43,8 @@ import {
   botDeleteStudentFromActive,
   botDeleteStudentFromActiveExecute,
 } from "./botModules/botStudentManager.ts";
+import { exportKVToSheet } from "./googleSheets/sheetsCore.ts";
+
 
 export interface SessionData {
   stage:
@@ -174,6 +176,11 @@ bot.callbackQuery("manageStudents", async (ctx) => {
 bot.callbackQuery("deleteStudentFromCourse", async (ctx) => {
   await ctx.answerCallbackQuery();
   await botDeleteStudentFromActive(ctx);
+});
+
+bot.callbackQuery("exportDB", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await botExportDB(ctx);
 });
 
 // bot.callbackQuery("endLearning", async (ctx) => {

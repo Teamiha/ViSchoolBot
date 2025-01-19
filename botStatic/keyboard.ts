@@ -33,7 +33,9 @@ export const adminKeyboard = new InlineKeyboard()
   .row()
   .text("Управление курсами", "manageCourses")
   .row()
-  .text("Управление студентами", "manageStudents");
+  .text("Управление студентами", "manageStudents")
+  .row()
+  .text("Регистрация", "startRegistration");
 
 export const manageStudentsKeyboard = new InlineKeyboard()
   .text("Удалить студента с курса", "deleteStudentFromCourse")
