@@ -1,9 +1,9 @@
 import { saveAdminOAuthTokens } from "../googleSheets/sheetsDB.ts";
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "../config.ts";
+import { GOOGLE_CLIENT_SECRET } from "../config.ts";
 import { OAuthTokens } from "../googleSheets/sheetsDB.ts";
 
 const REDIRECT_URI = "http://localhost:8000/oauth2callback";
-
+const CLIENT_ID = "560125731996-01q2h00k2dcn5p6a1ur40q7n8l64ha9s.apps.googleusercontent.com";
 Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
@@ -14,13 +14,13 @@ Deno.serve(async (req) => {
 
       if (code && state === "admin") {
         try {
-          if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+          if (!CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
             throw new Error("Missing Google OAuth credentials");
           }
           
           const params = new URLSearchParams();
           params.append("code", code);
-          params.append("client_id", GOOGLE_CLIENT_ID);
+          params.append("client_id", CLIENT_ID);
           params.append("client_secret", GOOGLE_CLIENT_SECRET);
           params.append("redirect_uri", REDIRECT_URI);
           params.append("grant_type", "authorization_code");

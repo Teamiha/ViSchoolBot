@@ -261,4 +261,6 @@ bot.on("message:photo", async (ctx) => {
   await botPhotoProcessing(ctx);
 });
 
-bot.start();
+// bot.start();
+
+export { bot };
