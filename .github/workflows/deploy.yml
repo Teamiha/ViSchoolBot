@@ -20,5 +20,5 @@ jobs:
       - name: Deploy to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: ""
+          project: "mikhail-vischoolbot-62"
           entrypoint: "main.ts"
