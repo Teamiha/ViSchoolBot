@@ -1,10 +1,10 @@
-import { REDIRECT_URI } from "../config.ts";
+// import { REDIRECT_URI } from "../config.ts";
 
 // const REDIRECT_URI = "https://mikhail-butlerbot-63.deno.dev/oauth2callback";
 
 
 
-// const REDIRECT_URI = "http://localhost:8000/oauth2callback";
+const REDIRECT_URI = "https://mikhail-vischoolbot-62.deno.dev/oauth2callback";
 
 const CLIENT_ID = "560125731996-01q2h00k2dcn5p6a1ur40q7n8l64ha9s.apps.googleusercontent.com";
 

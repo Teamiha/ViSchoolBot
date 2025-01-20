@@ -21,12 +21,15 @@ const handleUpdate = webhookCallback(bot, "std/http", {
 Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
+    console.log("Incoming request path:", url.pathname);
     const incomingPath = url.pathname.slice(1);
 
     if (url.pathname === "/oauth2callback") {
       const code = url.searchParams.get("code");
-      const state = url.searchParams.get("state"); // Ожидаем "admin"
-
+      const state = url.searchParams.get("state");
+      
+      console.log("OAuth callback params:", { code: !!code, state });
+      
       if (code && state === "admin") {
         try {
           const params = new URLSearchParams();
@@ -73,8 +76,7 @@ Deno.serve(async (req) => {
         incomingPath.startsWith(BOT_TOKEN)
       )
     ) {
-      const response = await handleUpdate(req);
-      return response;
+      return await handleUpdate(req);
     }
 
     console.log("⚠️ Unhandled request path");
