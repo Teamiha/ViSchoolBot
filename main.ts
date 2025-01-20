@@ -25,10 +25,18 @@ Deno.serve(async (req) => {
     const incomingPath = url.pathname.slice(1);
 
     if (url.pathname === "/oauth2callback") {
+      console.log("OAuth callback hit");
       const code = url.searchParams.get("code");
       const state = url.searchParams.get("state");
       
-      console.log("OAuth callback params:", { code: !!code, state });
+      console.log("OAuth params:", {
+        hasCode: !!code,
+        codePreview: code ? `${code.substring(0, 10)}...` : null,
+        state,
+        clientId: GOOGLE_CLIENT_ID,
+        redirectUri: REDIRECT_URI,
+        hasClientSecret: !!GOOGLE_CLIENT_SECRET
+      });
       
       if (code && state === "admin") {
         try {
@@ -38,6 +46,8 @@ Deno.serve(async (req) => {
           params.append("client_secret", GOOGLE_CLIENT_SECRET);
           params.append("redirect_uri", REDIRECT_URI);
           params.append("grant_type", "authorization_code");
+
+          console.log("Request params:", params.toString());
 
           const response = await fetch("https://oauth2.googleapis.com/token", {
             method: "POST",
@@ -49,8 +59,16 @@ Deno.serve(async (req) => {
 
           if (!response.ok) {
             const errorText = await response.text();
-            console.error("Ошибка при обмене кода на токены:", errorText);
-            return new Response("Ошибка авторизации.", { status: 500 });
+            console.error("Token exchange error details:", {
+              status: response.status,
+              statusText: response.statusText,
+              headers: Object.fromEntries(response.headers),
+              error: errorText
+            });
+            return new Response(
+              `Ошибка авторизации: ${response.status} ${errorText}`, 
+              { status: 500 }
+            );
           }
 
           const tokens: OAuthTokens = await response.json();
